@@ -236,7 +236,7 @@ void GLog_updateAI() {
     for (i = 2; i < config.units_on_map; i++) {
         if (game_player[i].freeze || freeze) {
             if (game_player[i].freeze) game_player[i].freeze--;
-            if (freeze) freeze--;
+            if (freeze && (i == 2)) freeze--;
             game_player[i].speed = 0;
             game_player[i].fire = 0;
             continue;
