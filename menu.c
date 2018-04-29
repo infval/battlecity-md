@@ -123,6 +123,7 @@ void modeMenu() {
 
     JOY_setEventHandler(modeMenu_JoyEvent);
 
+    config.game_mode = 0;
     for (;;) {
 
 		tank.posy = SPRITE_POS_SELECTOR_Y + (selector << 4);
