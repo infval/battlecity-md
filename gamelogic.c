@@ -300,9 +300,9 @@ void GLog_killBullet(_bullet *bull, u8 explode) {
     u16 x = bull->posx;
     u16 y = bull-> posy;
     u16 r = bull-> rotate;
-    if (r == 0) {
+    if (!(r & 1)) {
         y -= 8;
-    } else if (r == 1) {
+    } else if (r & 1) {
         x -= 8;
     }
 

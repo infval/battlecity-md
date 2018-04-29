@@ -55,7 +55,7 @@ void detectBulletToWallCollision(_bullet *bull) {
 
     if (bull->speed == 0) return;
 
-    if (x0 < 0 || x0 >= MAP_W - 1 || y0 < 0 || y0 >= MAP_H - 1) {
+    if (x0 < 0 || x0 >= MAP_W || y0 < 0 || y0 >= MAP_H) {
 
         if (mods.bul_ricochet && (!bull->ricocheted)) {
             bull->ricocheted = TRUE;
