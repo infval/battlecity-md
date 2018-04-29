@@ -49,7 +49,7 @@ void detectBulletToWallCollision(_bullet *bull) {
 
 
     s16 after_hit;
-    s16 mod = (((x | y) & 7) - 1) >> 2;
+    s16 mod = ((x | y) & 7) >> 2;
     u8 kill_bull = 0;
     u16 rotate = bull->rotate;
 
