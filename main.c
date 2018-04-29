@@ -9,6 +9,7 @@
 #include "sprite.h"
 #include "resources.h"
 #include "gamelogic.h"
+#include "option.h"
 
 
 void init();
@@ -21,7 +22,7 @@ s8 do_scroll = TRUE;
 
 extern _mods mods;
 
-int main(int argc, char** argv) {
+int main() {
 
 
     init();

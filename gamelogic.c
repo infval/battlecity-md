@@ -606,9 +606,9 @@ void GLog_initGamer(u8 player_idx) {
     }
     victory_timer = 0;
 
-    if (config.debug & BONUS_GOD == BONUS_GOD) {
+    if ((config.debug & BONUS_GOD) == BONUS_GOD) {
 //        game_player[player_idx].bonus = BONUS_GOD;
-        game_player[0].god = 1024*100;
+//        game_player[0].god = 1024*100;
     }
 }
 
@@ -966,19 +966,19 @@ void setBonus(u8 player) {
 
     u16 i;
     switch (bonus.type) {
-        case BONUS_GOD://бессмертие type = 1;
+        case BONUS_GOD://Р±РµСЃСЃРјРµСЂС‚РёРµ type = 1;
             game_player[player].god = 1024;
             break;
-        case BONUS_TIME://время type = 2;
+        case BONUS_TIME://РІСЂРµРјСЏ type = 2;
 			if (player == 0 || player == 1) freeze = 1024;
 			else freeze_players = 1024;
             break;
-        case BONUS_ARM_STAFF://лопата type = 3;
+        case BONUS_ARM_STAFF://Р»РѕРїР°С‚Р° type = 3;
             if (player == 0 || player == 1) armor_staff = ARMOR_STAFF_TIME;
 			else armor_staff = ARMOR_STAFF_TIME+1;
             break;
 
-        case BONUS_STAR://звезда type = 4;
+        case BONUS_STAR://Р·РІРµР·РґР° type = 4;
 
 		if ((player < 2 && !mods.pl_en_tank) || (player >= 2 && mods.en_pl_skin)) {
             game_player[player].type++;
@@ -1017,15 +1017,15 @@ void setBonus(u8 player) {
 				}
 				else if(game_player[player].type == 7){
                     game_player[player].hitpoint += 2;
-                    if(game_player[player].speed == TANK_SPEED_1)game_player[player].speed == TANK_SPEED_2;
-                    else if(game_player[player].speed == TANK_SPEED_2)game_player[player].speed == TANK_SPEED_3;
+                    if(game_player[player].speed == TANK_SPEED_1)game_player[player].speed = TANK_SPEED_2;
+                    else if(game_player[player].speed == TANK_SPEED_2)game_player[player].speed = TANK_SPEED_3;
                     if(game_player[player].bullet_limit == 1)game_player[player].bullet_limit = 2;
                     if(game_player[player].bullet_speed == BULLET_SPEED_1)game_player[player].bullet_speed = BULLET_SPEED_2;
 				}
 		}
             break;
 
-        case BONUS_BOMB://бомба type = 5;
+        case BONUS_BOMB://Р±РѕРјР±Р° type = 5;
             if(player==0||player==1)
 			for (i = 2; i < config.units_on_map; i++) {
                 if (game_player[i].hitpoint) {
@@ -1049,7 +1049,7 @@ void setBonus(u8 player) {
 			}
             break;
 
-        case BONUS_LIFE://жизнь type = 6;
+        case BONUS_LIFE://Р¶РёР·РЅСЊ type = 6;
             if (player==0||player==1) {
                 game_player[player].lives++;
                 soundPlay(snd_live_got, sizeof (snd_live_got), SOUND_PCM_CH1, 0);
@@ -1061,7 +1061,7 @@ void setBonus(u8 player) {
 			}
             break;
 
-		case BONUS_GUN://пистолет type = 7;
+		case BONUS_GUN://РїРёСЃС‚РѕР»РµС‚ type = 7;
 			if(player==0||player==1){
 				game_player[player].type = 3;
 				game_player[player].bullet_speed = BULLET_SPEED_2;
@@ -1083,7 +1083,7 @@ void setBonus(u8 player) {
 			}
             break;
 
-		case BONUS_SHIP://корабль type = 8;
+		case BONUS_SHIP://РєРѕСЂР°Р±Р»СЊ type = 8;
 			game_player[player].ship = 1;
 
 			break;

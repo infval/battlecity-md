@@ -14,6 +14,8 @@
 #include "defs.h"
 //#include "audio.h"
 #include "resources.h"
+#include "option.h"
+#include "mutator.h"
 
 
 
@@ -36,7 +38,7 @@ void joyEventGame(u16 joy, u16 changed, u16 state);
 void vblankCB();
 volatile u16 vb_counter = 0;
 void updateAudio();
-void sleepFrames(int i);
+void soundPlayEngine();
 
 void sleepFrames(int i){
 	int a;
@@ -56,7 +58,10 @@ u8 kills_2[4];
 u32 top_scor;
 u16 level_timer;
 
-
+// main.c
+extern void battlecity_init();
+extern void tank1990_init();
+extern void mods_mode_init();
 
 void setGameMode() {
     switch (config.game_mode) {
@@ -121,7 +126,6 @@ void startGame() {
 
 void selectLevel() {
 
-    u16 i;
     u16 joy = 0;
     s16 stage_ctr = 0;
     u8 init_logic = 0;

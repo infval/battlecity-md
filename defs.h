@@ -76,7 +76,7 @@
 
 
 typedef struct {
-    u8* maps_data;
+    const u8* maps_data;
     u8 game_mode;
     u8 difficulty;
     u8 pl_friend_fire;

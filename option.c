@@ -47,8 +47,6 @@ void startOption() {
     opt_selected_item = -1;
     selector = 0;
 
-    u16 joy1;
-
     VDP_resetSprites();
 
 
@@ -410,8 +408,6 @@ void customGameOption() {
 
     opt_selected_item = -1;
     selector = 0;
-
-    u16 joy1;
 
     VDP_resetSprites();
 

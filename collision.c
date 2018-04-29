@@ -8,6 +8,8 @@
 #include "resources.h"
 //#include "audio.h"
 
+void tileReaction(_bullet* bull, s16* after_hit, u8* kill_bull, s16* x0, s16* y0, u8 xShift, u8 yShift);
+
 u8 moveAvailableInUnits(_tank *tank) {
 
 
@@ -268,18 +270,18 @@ void detectBulletToUnitsCollision(_bullet *bull) {
     s16 delta_y;
     _tank *player1 = &game_player[0];
     _tank *player2 = &game_player[1];
-    s16 gamer_bull_flag = 0;
+    //s16 gamer_bull_flag = 0;
 
     if ((config.en_friend_fire == KILL) || (config.en_friend_fire == BULLETS_STOP)){
             i = 0;
             end = config.units_on_map;
-            gamer_bull_flag = 1;
+            //gamer_bull_flag = 1;
     }
     else {
         if (bull->maker == player1 || bull->maker == player2) {
             i = 0;
             end = config.units_on_map;
-            gamer_bull_flag = 1;
+            //gamer_bull_flag = 1;
         }
     }
     for (; i < end; i++) {

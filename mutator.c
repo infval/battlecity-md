@@ -19,11 +19,7 @@ void showModText() {
 //    u16 mods[MODS_COUNT];
     u16 pos[] = {0, 0, 0, 0, 0, 0, 0};
     u16 nums = 0;
-    u16 p;
-    s16 rnd = 0;
-    s16 old_rnd = 0;
 //    char *txt[] = {"", "", "", "", "", "", "", "", "", ""};
-    u8 i;
 
 
 //    int16ToStr(rnd, txt, 10);

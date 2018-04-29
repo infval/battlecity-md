@@ -38,6 +38,7 @@ extern u16 current_map[];
 void setMap(VDPPlan plan, const u8 *map, u8 game_mode);
 void setMapEx(VDPPlan plan, const u8 *map, u8 game_mode, u8 fake);
 void setFakeMap(const u8 *map, u8 game_mode);
+void setMapLevel(u8 lvl);
 void setFakeMapLevel(u8 lvl);
 void setMenuMap();
 void setEmptyEditorMap();

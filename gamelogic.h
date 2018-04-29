@@ -103,7 +103,9 @@ void GLog_setVictory();
 void GLog_removeEnemy();
 
 extern u16 pause;
+void setBonus(u8 player);
 void showScoreQuad(u16 val, u16 posx, u16 posy);
+void soundPlay(const u8 *sample, const u32 len, const u16 channel, const u8 loop);
 
 
 extern _scor scor;

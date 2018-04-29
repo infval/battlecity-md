@@ -26,32 +26,37 @@ void spriteInit() {
 
 void drawSprite2x2(u16 sprite_atr, s16 x, s16 y) {
 
-	VDP_setSpriteFull(sprite_counter++, x + MAP_PIXEL_X, y + MAP_PIXEL_Y, SPRITE_SIZE(2, 2), sprite_atr, sprite_counter+1);
+	VDP_setSpriteFull(sprite_counter, x + MAP_PIXEL_X, y + MAP_PIXEL_Y, SPRITE_SIZE(2, 2), sprite_atr, sprite_counter+1);
+	sprite_counter++;
 
 }
 
 void drawSprite8x8(u16 sprite_atr, s16 x, s16 y) {
 
-	VDP_setSpriteFull(sprite_counter++, x + MAP_PIXEL_X, y + MAP_PIXEL_Y, SPRITE_SIZE(8, 8), sprite_atr, sprite_counter+1);
+	VDP_setSpriteFull(sprite_counter, x + MAP_PIXEL_X, y + MAP_PIXEL_Y, SPRITE_SIZE(8, 8), sprite_atr, sprite_counter+1);
+	sprite_counter++;
 
 }
 
 void drawSprite1x2(u16 sprite_atr, s16 x, s16 y) {
 
-	VDP_setSpriteFull(sprite_counter++, x + MAP_PIXEL_X, y + MAP_PIXEL_Y, SPRITE_SIZE(1, 2), sprite_atr, sprite_counter+1);
+	VDP_setSpriteFull(sprite_counter, x + MAP_PIXEL_X, y + MAP_PIXEL_Y, SPRITE_SIZE(1, 2), sprite_atr, sprite_counter+1);
+	sprite_counter++;
 
 }
 
 void drawSprite4x1(u16 sprite_atr, s16 x, s16 y) {
 
-	VDP_setSpriteFull(sprite_counter++, x + MAP_PIXEL_X, y + MAP_PIXEL_Y, SPRITE_SIZE(4, 1), sprite_atr | TILE_ATTR(0, 1, 0, 0), sprite_counter+1);
+	VDP_setSpriteFull(sprite_counter, x + MAP_PIXEL_X, y + MAP_PIXEL_Y, SPRITE_SIZE(4, 1), sprite_atr | TILE_ATTR(0, 1, 0, 0), sprite_counter+1);
+	sprite_counter++;
 
 }
 
 
 void drawSpritePixel(u16 sprite_atr, s16 x, s16 y) {
 
-	VDP_setSpriteFull(sprite_counter++, x + MAP_PIXEL_X, y + MAP_PIXEL_Y, 0, sprite_atr, sprite_counter+1);
+	VDP_setSpriteFull(sprite_counter, x + MAP_PIXEL_X, y + MAP_PIXEL_Y, 0, sprite_atr, sprite_counter+1);
+	sprite_counter++;
 
 }
 
@@ -60,13 +65,17 @@ void updateSprite() {
     ani_counter++;
 	color_strobe++;
 
-	VDP_setSpriteFull(sprite_counter++, -8, -8, SPRITE_SIZE(1, 1), 0, sprite_counter+1);
+	VDP_setSpriteFull(sprite_counter, -8, -8, SPRITE_SIZE(1, 1), 0, sprite_counter+1);
+	sprite_counter++;
 
 	if (sprite_counter<spr_kl) {
         int ttt;
         int spr_kl2 = sprite_counter;
 
-        for (ttt=0; ttt<(spr_kl-sprite_counter)+2; ttt++) VDP_setSpriteFull(sprite_counter++, -8, -8, SPRITE_SIZE(1, 1), 0, sprite_counter+1);
+        for (ttt=0; ttt<(spr_kl-sprite_counter)+2; ttt++) {
+            VDP_setSpriteFull(sprite_counter, -8, -8, SPRITE_SIZE(1, 1), 0, sprite_counter+1);
+            sprite_counter++;
+        }
         spr_kl=spr_kl2;
     }
 
@@ -76,7 +85,7 @@ void updateSprite() {
 
     if (sprite_counter>spr_kl) spr_kl = sprite_counter;
 
-    u16 num_index = VDP_refreshHighestAllocatedSpriteIndex();
+    VDP_refreshHighestAllocatedSpriteIndex();
 
 
     VDP_updateSprites(sprite_counter, 1);

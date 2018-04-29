@@ -10,7 +10,7 @@
 
 
 
-
+void sleepFrames(int i);
 void startGame();
 
 extern s16 selected_stage;

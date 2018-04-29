@@ -78,7 +78,6 @@ void showScore() {
     score2[3] = 0;
     score2[4] = 0;
 
-    u16 i;
     u16 joy;
     u8 play_sound;
 
