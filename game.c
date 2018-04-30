@@ -35,8 +35,6 @@ void startLevel();
 void showGameover();
 void drawGameover();
 void joyEventGame(u16 joy, u16 changed, u16 state);
-void vblankCB();
-volatile u16 vb_counter = 0;
 void updateAudio();
 void soundPlayEngine();
 
@@ -47,11 +45,6 @@ void sleepFrames(int i){
 	}
 }
 
-void vblankCB() {
-
-    vb_counter++;
-    GRend_repaint();
-}
 
 u8 kills_1[4];
 u8 kills_2[4];
@@ -222,7 +215,7 @@ void startLevel() {
 	for (i = 0; i < config.max_bullets; i++)bullets[i].speed = 0;
 
 //	VDP_fillTileMapRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
-	VDP_fillTileMapRect(PLAN_B, RES_TILE_GREY, 0, 0, 32, 28);
+	VDP_fillTileMapRect(PLAN_A, RES_TILE_GREY, 0, 0, 32, 28);
 	VDP_resetSprites();
 	VDP_updateSprites(1, 1);
 
@@ -248,7 +241,6 @@ void startLevel() {
 
 
     VDP_setPalette(0, pal_red);
-	SYS_setVIntCallback(vblankCB);
 
 	JOY_setEventHandler(joyEventGame);
 
@@ -270,12 +262,11 @@ void startLevel() {
             game_over_timer++;
             if (game_over_timer >= 256) break;
         }
-
+        GRend_repaint();
         VDP_waitVSync();
     }
 
 
-	SYS_setVIntCallback(0);
     JOY_setEventHandler(0);
 }
 
