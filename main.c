@@ -160,7 +160,7 @@ void showMessage() {
     VDP_drawTextBG(PLAN_B, "for help in code adaptation", (40 - sizeof ("for help in code adaptation")) / 2, 19);
     VDP_drawTextBG(PLAN_B, "MASTERMAX", (40 - sizeof ("MASTERMAX")) / 2, 21);
     VDP_drawTextBG(PLAN_B, "for TANK 1990 level's data", (40 - sizeof ("for TANK 1990 level's data")) / 2, 23);
-    VDP_drawTextBG(PLAN_B, "Sharpnull", (40 - sizeof ("MASTERMAX")) / 2, 25);
+    VDP_drawTextBG(PLAN_B, "Sharpnull", (40 - sizeof ("Sharpnull")) / 2, 25);
     VDP_drawTextBG(PLAN_B, "for testing and bugs fixing", (40 - sizeof ("for testing and bugs fixing")) / 2, 27);
 
 	VDP_fadePalTo(0, pal_info_screen, 16, 0);
