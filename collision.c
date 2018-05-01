@@ -49,13 +49,13 @@ void detectBulletToWallCollision(_bullet *bull) {
 
 
     s16 after_hit;
-    s16 mod = (((x | y) & 7) - 1) >> 2;
+    s16 mod = ((x | y) & 7) >> 2;
     u8 kill_bull = 0;
     u16 rotate = bull->rotate;
 
     if (bull->speed == 0) return;
 
-    if (x0 < 0 || x0 >= MAP_W - 1 || y0 < 0 || y0 >= MAP_H - 1) {
+    if (x0 < 0 || x0 >= MAP_W || y0 < 0 || y0 >= MAP_H) {
 
         if (mods.bul_ricochet && (!bull->ricocheted)) {
             bull->ricocheted = TRUE;
@@ -189,7 +189,7 @@ u8 moveAvailableInWalls(_tank *tank) {
     s16 y2 = (y1 + 15) >> 3;
     x1 >>= 3;
     y1 >>= 3;
-    if (x1 < 0 || x1 >= MAP_W - 1 || y1 < 0 || y1 >= MAP_H - 1) return 0;
+    if (x1 < 0 || x2 >= MAP_W || y1 < 0 || y2 >= MAP_H) return 0;
 
     u16 tile_idx = 0;
 

@@ -11,7 +11,7 @@ u16 sprite_counter;
 u16 color_strobe;
 u8 ani_counter;
 
- u16 spr_kl;
+u16 spr_kl;
 
 void spriteInit() {
 //spr_kl=0;
@@ -68,22 +68,22 @@ void updateSprite() {
 	VDP_setSpriteFull(sprite_counter, -8, -8, SPRITE_SIZE(1, 1), 0, sprite_counter+1);
 	sprite_counter++;
 
-	if (sprite_counter<spr_kl) {
+	if (sprite_counter < spr_kl) {
         int ttt;
-        int spr_kl2 = sprite_counter;
+        u16 spr_kl2 = sprite_counter;
 
-        for (ttt=0; ttt<(spr_kl-sprite_counter)+2; ttt++) {
+        for (ttt = 0; ttt < (spr_kl - spr_kl2); ttt++) {
             VDP_setSpriteFull(sprite_counter, -8, -8, SPRITE_SIZE(1, 1), 0, sprite_counter+1);
             sprite_counter++;
         }
-        spr_kl=spr_kl2;
+        spr_kl = spr_kl2;
     }
 
 //    char a[22];
 //    intToStr(sprite_counter, a, 1);
 //    VDP_drawText(a, 0, 2);
 
-    if (sprite_counter>spr_kl) spr_kl = sprite_counter;
+    if (sprite_counter > spr_kl) spr_kl = sprite_counter;
 
     VDP_refreshHighestAllocatedSpriteIndex();
 

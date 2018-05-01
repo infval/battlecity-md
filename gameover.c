@@ -221,7 +221,7 @@ void showGameoverWord() {
 	//VDP_fillTileRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
 	setMap(PLAN_B, &maps_data[MAP_GAMEOVER * MAP_LEN], 0);
 	VDP_resetSprites();
-	VDP_updateSprites(1,1);
+	VDP_updateSprites(1, FALSE);
 	//VDP_updateSprites();
     VDP_setPalette(0, pal_red);
     //startPlaySample(snd_gameover, sizeof (snd_gameover), 10000, AUDIO_PAN_CENTER, 9);
