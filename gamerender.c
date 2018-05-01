@@ -32,7 +32,11 @@ void GRend_prepareRepaint() {
 
     for (i = 0; i < config.max_bullets; i++) {
         if (!bullets[i].speed)continue;
-        drawSprite1x2(SPRITE_ADDR_BULLET + (bullets[i].rotate << 1), bullets[i].posx + 3, bullets[i].posy);
+        if (bullets[i].rotate & 1) {
+            drawSprite1x2(SPRITE_ADDR_BULLET + (bullets[i].rotate << 1), bullets[i].posx + 3 - 8, bullets[i].posy);
+        } else {
+            drawSprite1x2(SPRITE_ADDR_BULLET + (bullets[i].rotate << 1), bullets[i].posx + 3, bullets[i].posy - 8);
+        }
     }
 
     i = config.max_explode;

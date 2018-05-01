@@ -434,6 +434,11 @@ void GLog_shot(_tank *tank) {
         bull_buff->rotate = tank->rotate;
         bull_buff->posx = tank->posx;
         bull_buff->posy = tank->posy;
+        if (bull_buff->rotate & 1) {
+            bull_buff->posx += 8;
+        } else {
+            bull_buff->posy += 8;
+        }
         bull_buff->ricocheted = FALSE;
         if ((bull_buff->posx & 3) == 0 && (tank->rotate & 1))bull_buff->posx += 1;
         if ((bull_buff->posy & 3) == 0 && !(tank->rotate & 1))bull_buff->posy += 1;
