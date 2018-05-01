@@ -145,20 +145,23 @@ void showMessage() {
 			//char a[22];
 			//intToStr(tile_idx, a, 6);
 //    uint16ToStr(GAME_VERSION, str_version, 200);
-    VDP_drawTextBG(PLAN_B, "battlecity-md v", (40 - sizeof ("battlecity-md vX.XXX"))/2, 1);
-    VDP_drawTextBG(PLAN_B, GAME_VERSION, (40 - sizeof ("battlecity-md vX.XX"))/2 + sizeof ("battlecity-md "), 1);
-    VDP_drawTextBG(PLAN_B, "game by KRIKzz 2009", (40 - sizeof ("game by KRIKzz 2009")) / 2, 3);
-    VDP_drawTextBG(PLAN_B, "mod by werton 2018", (40 - sizeof ("mod by werton 2018")) / 2, 5);
+    VDP_drawTextBG(PLAN_B, "battlecity-md vX.XX-X", (40 - sizeof ("battlecity-md vX.XX-X"))/2, 0);
+    VDP_drawTextBG(PLAN_B, GAME_VERSION, (40 - sizeof ("battlecity-md vX.XX-X"))/2 + sizeof ("battlecity-md "), 0);
+    VDP_drawTextBG(PLAN_B, GAME_BUILD, (40 - sizeof ("battlecity-md vX.XX-X"))/2 + sizeof ("battlecity-md vX.XX"), 0);
+    VDP_drawTextBG(PLAN_B, "game by KRIKzz 2009", (40 - sizeof ("game by KRIKzz 2009")) / 2, 2);
+    VDP_drawTextBG(PLAN_B, "mod by werton 2018", (40 - sizeof ("mod by werton 2018")) / 2, 4);
 
-    VDP_drawTextBG(PLAN_B, "thanks to:", (40 - sizeof ("thanks to:")) / 2, 9);
-    VDP_drawTextBG(PLAN_B, "Stephane Dallongeville", (40 - sizeof ("Stephane Dallongeville")) / 2, 11);
-    VDP_drawTextBG(PLAN_B, "for incredible SGDK", (40 - sizeof ("for incredible SGDK")) / 2, 13);
-    VDP_drawTextBG(PLAN_B, "KRIKzz", (40 - sizeof ("KRIKzz")) / 2, 15);
-    VDP_drawTextBG(PLAN_B, "for source code of battlecity-md", (40 - sizeof ("for source code of battlecity-md")) / 2, 17);
-    VDP_drawTextBG(PLAN_B, "SPOT", (40 - sizeof ("SPOT")) / 2, 19);
-    VDP_drawTextBG(PLAN_B, "for help in code adaptation", (40 - sizeof ("for help in code adaptation")) / 2, 21);
-    VDP_drawTextBG(PLAN_B, "MASTERMAX", (40 - sizeof ("MASTERMAX")) / 2, 23);
-    VDP_drawTextBG(PLAN_B, "for TANK 1990 level's data", (40 - sizeof ("for TANK 1990 level's data")) / 2, 25);
+    VDP_drawTextBG(PLAN_B, "thanks to:", (40 - sizeof ("thanks to:")) / 2, 7);
+    VDP_drawTextBG(PLAN_B, "Stephane Dallongeville", (40 - sizeof ("Stephane Dallongeville")) / 2, 9);
+    VDP_drawTextBG(PLAN_B, "for incredible SGDK", (40 - sizeof ("for incredible SGDK")) / 2, 11);
+    VDP_drawTextBG(PLAN_B, "KRIKzz", (40 - sizeof ("KRIKzz")) / 2, 13);
+    VDP_drawTextBG(PLAN_B, "for source code of battlecity-md", (40 - sizeof ("for source code of battlecity-md")) / 2, 15);
+    VDP_drawTextBG(PLAN_B, "SPOT", (40 - sizeof ("SPOT")) / 2, 17);
+    VDP_drawTextBG(PLAN_B, "for help in code adaptation", (40 - sizeof ("for help in code adaptation")) / 2, 19);
+    VDP_drawTextBG(PLAN_B, "MASTERMAX", (40 - sizeof ("MASTERMAX")) / 2, 21);
+    VDP_drawTextBG(PLAN_B, "for TANK 1990 level's data", (40 - sizeof ("for TANK 1990 level's data")) / 2, 23);
+    VDP_drawTextBG(PLAN_B, "Sharpnull", (40 - sizeof ("MASTERMAX")) / 2, 25);
+    VDP_drawTextBG(PLAN_B, "for testing and bugs fixing", (40 - sizeof ("for testing and bugs fixing")) / 2, 27);
 
 	VDP_fadePalTo(0, pal_info_screen, 16, 0);
 	//VDP_fadeTo(0, pal_info_screen, 16, 0);
