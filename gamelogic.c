@@ -449,9 +449,28 @@ void GLog_updateControl(u8 gamer_idx, u16 joy, u16 speed) {
 
     u16 temp;
     if (game_player[gamer_idx].birth || !game_player[gamer_idx].hitpoint)return;
+
+
+    if (config.turbo_b) {
+        if (game_player[gamer_idx].bullet_delay < BULLET_DELAY) game_player[gamer_idx].bullet_delay += 1;
+
+        if ((joy & BUTTON_B) && game_player[gamer_idx].fire_timer == 0 ) {
+            game_player[gamer_idx].fire = 1;
+            game_player[gamer_idx].fire_timer = 1;
+        } else if ((joy & BUTTON_B) && game_player[gamer_idx].fire_timer == 1 && game_player[gamer_idx].bullet_delay >= BULLET_DELAY) {
+    //        game_player[0].fire_timer = 0;
+    //        game_player[0].bullet_delay = 0;
+        }
+
+        if (game_player[gamer_idx].bullet_delay >= BULLET_DELAY) {
+            game_player[gamer_idx].fire_timer = 0;
+            game_player[gamer_idx].bullet_delay = 0;
+        }
+    }
+
+
     if (game_player[gamer_idx].freeze) {
         game_player[gamer_idx].freeze--;
-        game_player[gamer_idx].speed = 0;
         return;
     }
 
@@ -492,24 +511,6 @@ void GLog_updateControl(u8 gamer_idx, u16 joy, u16 speed) {
         if ((temp & 7) > 4)game_player[gamer_idx].posy = (temp >> 3 << 3) + 8;
         else game_player[gamer_idx].posy -= (temp & 7);
         if (game_player[gamer_idx].posy >> 3 > MAP_H - 2)game_player[gamer_idx].posy = (MAP_H - 2) << 3;
-    }
-
-
-    if (config.turbo_b) {
-        if (game_player[gamer_idx].bullet_delay < BULLET_DELAY) game_player[gamer_idx].bullet_delay += 1;
-
-        if ((joy & BUTTON_B) && game_player[gamer_idx].fire_timer == 0) {
-            game_player[gamer_idx].fire = 1;
-            game_player[gamer_idx].fire_timer = 1;
-        } else if ((joy & BUTTON_B) && game_player[gamer_idx].fire_timer == 1 && game_player[gamer_idx].bullet_delay >= BULLET_DELAY) {
-    //        game_player[0].fire_timer = 0;
-    //        game_player[0].bullet_delay = 0;
-        }
-
-        if (game_player[gamer_idx].bullet_delay >= BULLET_DELAY) {
-            game_player[gamer_idx].fire_timer = 0;
-            game_player[gamer_idx].bullet_delay = 0;
-        }
     }
 
 }
@@ -1151,5 +1152,4 @@ void soundPlay(const u8 *sample, const u32 len, const u16 channel, const u8 loop
         soundStopEngine();
     }
 }
-
 
