@@ -7,6 +7,8 @@
 #include "map.h"
 
 u16 water_strobe = 0;
+static s16 bullet_sprite_offset_x[4] = { 3+0, -4, 3+0, -3 };
+static s16 bullet_sprite_offset_y[4] = {  -8,  0,  -7,  0 };
 
 void GRend_prepareRepaint() {
 
@@ -32,11 +34,9 @@ void GRend_prepareRepaint() {
 
     for (i = 0; i < config.max_bullets; i++) {
         if (!bullets[i].speed)continue;
-        if (bullets[i].rotate & 1) {
-            drawSprite1x2(SPRITE_ADDR_BULLET + (bullets[i].rotate << 1), bullets[i].posx + 3 - 8, bullets[i].posy);
-        } else {
-            drawSprite1x2(SPRITE_ADDR_BULLET + (bullets[i].rotate << 1), bullets[i].posx + 3, bullets[i].posy - 8);
-        }
+        drawSprite1x2(SPRITE_ADDR_BULLET + (bullets[i].rotate << 1),
+            bullets[i].posx + bullet_sprite_offset_x[bullets[i].rotate],
+            bullets[i].posy + bullet_sprite_offset_y[bullets[i].rotate]);
     }
 
     i = config.max_explode;

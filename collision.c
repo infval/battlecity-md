@@ -353,6 +353,16 @@ void detectBulletToStaffCollision(_bullet *bull) {
         GLog_killStaff();
         GLog_killBullet(bull, 1);
     }
+    if (bull->rotate & 1) {
+        tile_idx = mapGetTile(x0, y0 + 1);
+    }
+    else {
+        tile_idx = mapGetTile(x0 + 1, y0);
+    }
+    if (tile_idx >= RES_TILE_STAFF && tile_idx <= RES_TILE_STAFF + 4) {
+        GLog_killStaff();
+        GLog_killBullet(bull, 1);
+    }
 }
 
 void detectBulletToBulletCollision(_bullet *bull) {

@@ -304,21 +304,13 @@ void joyEventGame(u16 joy, u16 changed, u16 state) {
     if (pause) return;
 
     if (config.turbo_b) {
-        if (joy == JOY_1 && (state & (BUTTON_C)) && game_player[0].fire_timer == 0) {
+        if (joy == JOY_1 && (changed & (BUTTON_A | BUTTON_C)) && (state & (BUTTON_A | BUTTON_C)) && game_player[0].fire_timer == 0) {
             game_player[0].fire = 1;
             game_player[0].fire_timer = 1;
-
         }
-        if (joy == JOY_1 && (state & (BUTTON_A)) && game_player[0].fire_timer == 0) {
-            game_player[0].fire = 1;
-            game_player[0].fire_timer = 1;
-
-        }
-
-        if (joy == JOY_2 && (state & (BUTTON_A | BUTTON_C)) && game_player[1].fire_timer == 0) {
+        if (joy == JOY_2 && (changed & (BUTTON_A | BUTTON_C)) && (state & (BUTTON_A | BUTTON_C)) && game_player[1].fire_timer == 0) {
             game_player[1].fire = 1;
             game_player[1].fire_timer = 1;
-
         }
     }
     else {
