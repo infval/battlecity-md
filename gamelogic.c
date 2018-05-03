@@ -473,13 +473,13 @@ void GLog_updateControl(u8 gamer_idx, u16 joy, u16 speed) {
         }
     }
 
-
+    game_player[gamer_idx].speed = 0;
+	
     if (game_player[gamer_idx].freeze) {
         game_player[gamer_idx].freeze--;
         return;
     }
 
-    game_player[gamer_idx].speed = 0;
 
     if (joy & BUTTON_UP) {
 
