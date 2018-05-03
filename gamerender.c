@@ -7,8 +7,8 @@
 #include "map.h"
 
 u16 water_strobe = 0;
-static s16 bullet_sprite_offset_x[4] = { 3+0, -4, 3+0, -3 };
-static s16 bullet_sprite_offset_y[4] = {  -8,  0,  -7,  0 };
+static const s16 bullet_sprite_offset_x[4] = { 3+0, -4, 3+0, -3 };
+static const s16 bullet_sprite_offset_y[4] = {  -8,  0,  -7,  0 };
 
 void GRend_prepareRepaint() {
 

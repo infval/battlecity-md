@@ -298,19 +298,33 @@ void detectBulletToUnitsCollision(_bullet *bull) {
         s16 bx = bull->posx;
         s16 by = bull->posy;
 
+        s16 margin_x = 0;
+        s16 margin_y = 0;
+        if ((game_player[i].rotate & 1) && !(bull->rotate & 1)) {
+            margin_x += 7;
+        } else if (!(game_player[i].rotate & 1) && (bull->rotate & 1)) {
+            margin_y += 7;
+        }
+
         if (bull->rotate == 3) {
-            bx -= 9;
+            bx -= 15;
         } else if (bull->rotate == 2) {
-            by -= 9;
+            by -= 15;
         }
 
         delta_x = bx - game_player[i].posx;
         delta_y = by - game_player[i].posy;
+        // Don't kill with ass
+        if ((delta_x < 0 && bull->rotate == 1)
+         || (delta_x > 0 && bull->rotate == 3)
+         || (delta_y < 0 && bull->rotate == 0)
+         || (delta_y > 0 && bull->rotate == 2))
+            continue;
 
         if (delta_x < 0) delta_x = -delta_x;
         if (delta_y < 0) delta_y = -delta_y;
 
-        if (delta_x < 15 && delta_y < 15) {
+        if (delta_x < 16 - margin_x && delta_y < 16 - margin_y) {
 
             // detect player to player friendly fire
             if ((bull->maker == &game_player[0]) || (bull->maker == &game_player[1])) {
