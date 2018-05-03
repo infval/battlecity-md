@@ -16,6 +16,7 @@ void init();
 void showSegaLogo();
 void showMessage();
 void config_init();
+void reset_mods();
 
 u16 pal_buff[16];
 s8 do_scroll = TRUE;
@@ -41,7 +42,7 @@ int main() {
 
 
     for (;;) {
-
+        reset_mods();
         startMenu(do_scroll);
 
         if (menuGetSelectedItem() == ITEM_MAP_EDITOR) {
@@ -201,15 +202,16 @@ void config_init() {
     config.max_explode = config.units_on_map << 1;
     config.max_bullets = config.units_on_map << 1;
 
-
-
     if (config.levels_pack == LEVELPACK_BC) {
         setMapsData(maps_data);
     }
     else if (config.levels_pack == LEVELPACK_TANK){
         setMapsData(maps_data2);
     }
+}
 
+
+void reset_mods() {
     mods.en_speed = 0;
     mods.en_armor = 0;
     mods.en_uranium = 0;
