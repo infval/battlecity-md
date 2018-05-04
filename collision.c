@@ -394,6 +394,16 @@ void detectBulletToBulletCollision(_bullet *bull) {
         if (!buff->speed || bull == buff)continue;
         delta_x = bull->posx - buff->posx;
         delta_y = bull->posy - buff->posy;
+        if (bull->rotate & 1) {
+            delta_y += 7;
+        } else {
+            delta_x += 7;
+        }
+        if (buff->rotate & 1) {
+            delta_y -= 7;
+        } else {
+            delta_x -= 7;
+        }
         if (delta_x < 0)delta_x = -delta_x;
         if (delta_y < 0)delta_y = -delta_y;
         if (delta_x < 6 && delta_y < 6) {
