@@ -365,7 +365,7 @@ void drawGameover() {
     word_y = MAP_H * 8 - game_over_timer;
     if (word_y < MAP_H / 2 * 8 - 14) word_y = MAP_H / 2 * 8 - 14;
     drawSprite4x1(SPRITE_GAMEOVER | TILE_ATTR(0, 1, 0, 0), word_x, word_y);
-    drawSprite4x1(SPRITE_GAMEOVER | TILE_ATTR(0, 1, 0, 0) + 4, word_x, word_y + 8);
+    drawSprite4x1((SPRITE_GAMEOVER + 4) | TILE_ATTR(0, 1, 0, 0), word_x, word_y + 8);
 
 }
 
