@@ -45,13 +45,19 @@ void drawSprite1x2(u16 sprite_atr, s16 x, s16 y) {
 
 }
 
-void drawSprite4x1(u16 sprite_atr, s16 x, s16 y) {
+void drawSprite1x1(u16 sprite_atr, s16 x, s16 y) {
 
-	VDP_setSpriteFull(sprite_counter, x + MAP_PIXEL_X, y + MAP_PIXEL_Y, SPRITE_SIZE(4, 1), sprite_atr | TILE_ATTR(0, 1, 0, 0), sprite_counter+1);
+	VDP_setSpriteFull(sprite_counter, x + MAP_PIXEL_X, y + MAP_PIXEL_Y, SPRITE_SIZE(1, 1), sprite_atr, sprite_counter+1);
 	sprite_counter++;
 
 }
 
+void drawSprite4x1(u16 sprite_atr, s16 x, s16 y) {
+
+	VDP_setSpriteFull(sprite_counter, x + MAP_PIXEL_X, y + MAP_PIXEL_Y, SPRITE_SIZE(4, 1), sprite_atr, sprite_counter+1);
+	sprite_counter++;
+
+}
 
 void drawSpritePixel(u16 sprite_atr, s16 x, s16 y) {
 

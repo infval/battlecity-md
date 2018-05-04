@@ -248,12 +248,6 @@ void startLevel() {
     while (!GLog_victory()) {
 
         GLog_updateGame();
-        GRend_prepareRepaint();
-        updateAudio();
-
-        if(level_timer < 65000) level_timer++;
-
-
 
         if (GLog_gameover()) {
             SND_stopPlay_4PCM (SOUND_PCM_CH1);
@@ -262,6 +256,12 @@ void startLevel() {
             game_over_timer++;
             if (game_over_timer >= 256) break;
         }
+
+        GRend_prepareRepaint();
+        updateAudio();
+
+        if(level_timer < 65000) level_timer++;
+
         GRend_repaint();
         VDP_waitVSync();
     }
@@ -363,9 +363,9 @@ void drawGameover() {
     s16 word_y;
 
     word_y = MAP_H * 8 - game_over_timer;
-    if (word_y < MAP_H / 2 * 8) word_y = MAP_H / 2 * 8;
-    drawSprite4x1(SPRITE_GAMEOVER, word_x, word_y);
-    drawSprite4x1(SPRITE_GAMEOVER + 4, word_x, word_y + 8);
+    if (word_y < MAP_H / 2 * 8 - 14) word_y = MAP_H / 2 * 8 - 14;
+    drawSprite4x1(SPRITE_GAMEOVER | TILE_ATTR(0, 1, 0, 0), word_x, word_y);
+    drawSprite4x1(SPRITE_GAMEOVER | TILE_ATTR(0, 1, 0, 0) + 4, word_x, word_y + 8);
 
 }
 

@@ -212,18 +212,26 @@ void config_init() {
 
 
 void reset_mods() {
+    config.mods_count = MODS_COUNT;
+    config.mods_inc_lvl = MODS_INC;
+    config.random_mods = RANDOM_MODS;
+
+    config.max_enemies_on_map = MAX_ENEMIES;
+    config.units_on_map = config.max_enemies_on_map + 2;
+    config.max_explode = config.units_on_map << 1;
+    config.max_bullets = config.units_on_map << 1;
+
     mods.en_speed = 0;
     mods.en_armor = 0;
     mods.en_uranium = 0;
     mods.en_bull_speed = 0;
-    mods.pl_speed_dec = 0;
-    mods.bul_ricochet = 0;
-    mods.en_no_walls = 0;
     mods.en_spawn_speed = 0;
     mods.en_doubles = 0;
-    mods.en_on_map_inc = 0;
-    mods.pl_en_tank = 0;
     mods.en_pl_skin = 0;
+    mods.pl_speed_dec = 0;
+    mods.pl_en_tank = 0;
+    mods.bul_ricochet = 0;
+    mods.en_no_walls = 0;
     mods.pvp_kills = 0;
     mods.no_bonuses = 0;
     mods.en_on_map_inc = 0;

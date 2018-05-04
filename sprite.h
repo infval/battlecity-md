@@ -21,6 +21,7 @@
 #define SPRITE_EXPLODE_BIG 208
 #define SPRITE_GAMEOVER 120
 #define SPRITE_BONUS 800
+#define SPRITE_PAUSE 22
 
 
 
@@ -40,6 +41,7 @@ void spriteInit();
 void drawSprite8x8(u16 sprite_atr, s16 x, s16 y);
 void drawSprite2x2(u16 sprite_atr, s16 x, s16 y);
 void drawSprite1x2(u16 sprite_atr, s16 x, s16 y);
+void drawSprite1x1(u16 sprite_atr, s16 x, s16 y);
 void drawTank(_tank *sprite);
 void updateSprite();
 void drawSprite4x1(u16 sprite_atr, s16 x, s16 y);

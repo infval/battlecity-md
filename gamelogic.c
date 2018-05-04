@@ -868,29 +868,31 @@ void updateGameMenu() {
         old_enemy_num = enemy_num;
     }
 
-    y = 15;
+    y = 16;
     lives = game_player[0].lives;
     if (old_lives1 != lives) {
-        if (lives > 9)lives = 9;
+        if (lives > 10) lives = 10;
+        else if (lives < 1) lives = 1;
         if (old_lives1 == -1) {
 			VDP_setTile(PLAN_B, RES_TILE_P1, x, y);
 			VDP_setTile(PLAN_B, RES_TILE_P, x + 1, y);
 			VDP_setTile(PLAN_B, RES_TILE_TANK_ICON_OGANGE, x, y + 1);
         }
-		VDP_setTile(PLAN_B, RES_TILE_STAGE_NUM + lives, x + 1, y + 1);
+		VDP_setTile(PLAN_B, RES_TILE_STAGE_NUM + lives - 1, x + 1, y + 1);
         old_lives1 = lives;
     }
 
-    y = 18;
+    y = 19;
     lives = game_player[1].lives;
     if (old_lives2 != lives && menuGetSelectedItem() == ITEM_TWO_PLAYER) {
-        if (lives > 9)lives = 9;
+        if (lives > 10) lives = 10;
+        else if (lives < 1) lives = 1;
         if (old_lives2 == -1) {
-			VDP_setTile(PLAN_B, RES_TILE_P1, x, y);
+			VDP_setTile(PLAN_B, RES_TILE_P2, x, y);
 			VDP_setTile(PLAN_B, RES_TILE_P, x + 1, y);
 			VDP_setTile(PLAN_B, RES_TILE_TANK_ICON_OGANGE, x, y + 1);
         }
-        VDP_setTile(PLAN_B, RES_TILE_STAGE_NUM + lives, x + 1, y + 1);
+        VDP_setTile(PLAN_B, RES_TILE_STAGE_NUM + lives - 1, x + 1, y + 1);
         old_lives2 = lives;
     }
 

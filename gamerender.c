@@ -17,11 +17,11 @@ void GRend_prepareRepaint() {
     u16 y;
     //u16 r;
 
-    if (pause && (water_strobe & 32)) {
+    if (pause && (water_strobe & 16)) {
         x = (MAP_W >> 1 << 3) - 20;
-        y = (MAP_H >> 1 << 3);
-        drawSprite4x1(22, x, y);
-        drawSprite4x1(23, x + 8, y);
+        y = (MAP_H >> 1 << 3) + 1;
+        drawSprite4x1(SPRITE_PAUSE | TILE_ATTR(0, 1, 0, 0), x, y);           // PAUS
+        drawSprite1x1(SPRITE_PAUSE | TILE_ATTR(0, 1, 0, 0) + 4, x + 8*4, y); // E
     }
 
     if (scor.timer) {
