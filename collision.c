@@ -48,7 +48,7 @@ void detectBulletToWallCollision(_bullet *bull) {
     s16 y0 = y >> 3;
 
 
-    s16 after_hit;
+    s16 after_hit1, after_hit2;
     s16 mod = ((x | y) & 7) >> 2;
     u8 kill_bull = 0;
     u16 rotate = bull->rotate;
@@ -78,24 +78,24 @@ void detectBulletToWallCollision(_bullet *bull) {
     }
 
     tile_idx = mapGetTile(x0, y0);
-    after_hit = tileAfterHit(tile_idx, rotate, mod);
-    if (after_hit >= 0) {
-        tileReaction(bull, &after_hit, &kill_bull, &x0, &y0, 0, 0);
+    after_hit1 = tileAfterHit(tile_idx, rotate, mod);
+    if (after_hit1 >= 0) {
+        tileReaction(bull, &after_hit1, &kill_bull, &x0, &y0, 0, 0);
     }
     if ((rotate & 1)) {
         tile_idx = mapGetTile(x0, y0 + 1);
-        after_hit = tileAfterHit(tile_idx, rotate, mod);
+        after_hit2 = tileAfterHit(tile_idx, rotate, mod);
 
-        if (after_hit >= 0) {
-            tileReaction(bull, &after_hit, &kill_bull, &x0, &y0, 0, 1);
+        if (after_hit2 >= 0) {
+            tileReaction(bull, &after_hit2, &kill_bull, &x0, &y0, 0, 1);
         }
     }
     else {
         tile_idx = mapGetTile(x0 + 1, y0);
-        after_hit = tileAfterHit(tile_idx, rotate, mod);
+        after_hit2 = tileAfterHit(tile_idx, rotate, mod);
 
-        if (after_hit >= 0) {
-            tileReaction(bull, &after_hit, &kill_bull, &x0, &y0, 1, 0);
+        if (after_hit2 >= 0) {
+            tileReaction(bull, &after_hit2, &kill_bull, &x0, &y0, 1, 0);
         }
 
     }
@@ -103,12 +103,13 @@ void detectBulletToWallCollision(_bullet *bull) {
     if (kill_bull) {
         GLog_killBullet(bull, 1);
         if (bull->maker == &game_player[0] || bull->maker == &game_player[1]) {
-            if (after_hit == 16) {
+            if (after_hit1 == RES_TILE_ARMOR || after_hit2 == RES_TILE_ARMOR) {
 //                startPlaySample(snd_bull_stop, sizeof (snd_bull_stop), 11000, AUDIO_PAN_CENTER, 6);
                 soundPlay(snd_bull_stop, sizeof (snd_bull_stop), SOUND_PCM_CH3, 0);
-            } else {
+            }
+            if ((after_hit1 >= 0 && after_hit1 < 16) || (after_hit2 >= 0 && after_hit2 < 16)) {
 //                startPlaySample(snd_bull_stop_briks, sizeof (snd_bull_stop_briks), 11000, AUDIO_PAN_CENTER, 3);
-                soundPlay(snd_brick_hit, sizeof (snd_brick_hit), SOUND_PCM_CH3, 0);
+                soundPlay(snd_brick_hit, sizeof (snd_brick_hit), SOUND_PCM_CH4, 0);
             }
         }
     }

@@ -325,7 +325,7 @@ void GLog_killPLayer(_tank *victim, _tank *killer) {
         switch (config.pl_friend_fire) {
             case BLOCK:
                 victim->freeze = 256;
-                soundPlay(snd_bull_stop, sizeof (snd_bull_stop), SOUND_PCM_CH3, 0);
+                soundPlay(snd_armor_hit, sizeof (snd_armor_hit), SOUND_PCM_CH3, 0);
                 break;
             case BULLETS_STOP:
                 soundPlay(snd_bull_stop, sizeof (snd_bull_stop), SOUND_PCM_CH3, 0);
@@ -347,8 +347,6 @@ void GLog_killPLayer(_tank *victim, _tank *killer) {
             }
         }
         else{
-
-            if(victim->hitpoint) soundPlay(snd_bull_stop, sizeof (snd_bull_stop), SOUND_PCM_CH3, 0);
 
             if ((!mods.pl_asskiller && !mods.en_invul) || (killer != &game_player[0] && killer != &game_player[1]) ) {
                 if (victim->ship == 1) {victim->ship = 0;}
@@ -385,13 +383,12 @@ void GLog_killPLayer(_tank *victim, _tank *killer) {
                 }
 
             }
+
+            if(victim->hitpoint) soundPlay(snd_armor_hit, sizeof (snd_armor_hit), SOUND_PCM_CH3, 0);
         }
 
-
-
-
         //if(victim->hitpoint)startPlaySample(snd_bull_stop, sizeof (snd_bull_stop), 11000, AUDIO_PAN_CENTER, 6);
-        if(victim->hitpoint) soundPlay(snd_bull_stop, sizeof (snd_bull_stop), SOUND_PCM_CH3, 0);
+        //if(victim->hitpoint) soundPlay(snd_bull_stop, sizeof (snd_bull_stop), SOUND_PCM_CH3, 0);
     }
     if (!victim->hitpoint) {
 
@@ -1045,7 +1042,6 @@ void setBonus(u8 player) {
             }
 			else {
 				for (i = 0; i < 2; i++) {
-					if (game_player[0].hitpoint)
                     if (game_player[i].hitpoint) {
                         GLog_makeExplode(EXPLODE_BIG, game_player[i].posx, game_player[i].posy);
                         game_player[i].hitpoint = 0;
