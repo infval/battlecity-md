@@ -6,10 +6,10 @@
  */
 
 #ifndef _GAMERENDER_H
-#define	_GAMERENDER_H
+#define _GAMERENDER_H
 
 void GRend_prepareRepaint();
 void GRend_repaint();
 
-#endif	/* _GAMERENDER_H */
+#endif /* _GAMERENDER_H */
 

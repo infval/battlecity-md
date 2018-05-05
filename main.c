@@ -25,7 +25,6 @@ extern _mods mods;
 
 int main() {
 
-
     init();
     config_init();
 
@@ -38,8 +37,6 @@ int main() {
     VDP_setPlanSize(32, 64);
 //    VDP_setScreenHeight224();
 //    VDP_setWindowVPos(FALSE, 5);
-
-
 
     for (;;) {
         reset_mods();
@@ -59,29 +56,25 @@ int main() {
             modeMenu();
         }
 
-
-//                showScore();
+//        showScore();
         startGame();
-
 
         startGameOver();
         do_scroll = TRUE;
     }
-
-
 
     return 0;
 }
 
 void init() {
 
-	u32 *save_ptr = (u32*) 0x20000;
-	VDP_loadTileData(gfx_bonus, 800, 8*4+4, 0);
-	VDP_loadTileData(game_gfx, RES_GFX_ADDR_GAME, RES_GFX_SIZE_GAME, 0);
-	VDP_loadTileData(logo_gfx, RES_GFX_ADDR_LOGO, RES_GFX_SIZE_LOGO, 0);
+    u32 *save_ptr = (u32*) 0x20000;
+    VDP_loadTileData(gfx_bonus, 800, 8*4+4, 0);
+    VDP_loadTileData(game_gfx, RES_GFX_ADDR_GAME, RES_GFX_SIZE_GAME, 0);
+    VDP_loadTileData(logo_gfx, RES_GFX_ADDR_LOGO, RES_GFX_SIZE_LOGO, 0);
 
     spriteInit();
-    map_editor_map_ready = 0;
+    map_editor_map_ready = FALSE;
 
     top_scor = save_ptr[0];
     if (top_scor != ~save_ptr[1]) top_scor = 0;
@@ -95,7 +88,6 @@ void init() {
     game_player[1].scor = 0;
 
     setMapsData(maps_data);
-
 }
 
 void showSegaLogo() {
@@ -106,66 +98,68 @@ void showSegaLogo() {
     u16 u = 0;
     u16 x = (40 - SEGA_LOGO_W) / 2;
     u16 y = (28 - SEGA_LOGO_H) / 2;
-	VDP_setPalette(0, palette_black);
-	VDP_fillTileMapRect (PLAN_B, 0, 0, 0, planWidth, planHeight);
-	//VDP_fillTileRect(APLAN, 0, 0, 0, vdp_plan_w, vdp_plan_h);
-	VDP_fillTileMapRectInc (PLAN_B, RES_GFX_ADDR_LOGO, x, y, SEGA_LOGO_W, SEGA_LOGO_H);
-	//VDP_fillTileRectInc(APLAN, RES_GFX_ADDR_LOGO, x, y, SEGA_LOGO_W, SEGA_LOGO_H);
-	pal_buff[0] = 0;
-	pal_buff[1] = 0xfff;
-	for (i = 0; i < 9; i++) pal_buff[i + 2] = pal_logo[(i + scroll) & 0xF];
-	VDP_fadePalTo(0, pal_buff, 16, 0);
-	//VDP_fadeTo(0, pal_buff, 16, 0);
+    VDP_setPalette(0, palette_black);
+    VDP_fillTileMapRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
+    //VDP_fillTileRect(APLAN, 0, 0, 0, vdp_plan_w, vdp_plan_h);
+    VDP_fillTileMapRectInc(PLAN_B, RES_GFX_ADDR_LOGO, x, y, SEGA_LOGO_W, SEGA_LOGO_H);
+    //VDP_fillTileRectInc(APLAN, RES_GFX_ADDR_LOGO, x, y, SEGA_LOGO_W, SEGA_LOGO_H);
+    pal_buff[0] = 0;
+    pal_buff[1] = 0xfff;
+    for (i = 0; i < 9; i++)
+        pal_buff[i + 2] = pal_logo[(i + scroll) & 0xF];
+    VDP_fadePalTo(0, pal_buff, 16, 0);
+    //VDP_fadeTo(0, pal_buff, 16, 0);
     sleepFrames(16);
 
-	for (u = 0; u < 40; u++) {
-
-        for (i = 0; i < 9; i++) pal_buff[i + 2] = pal_logo[(i + scroll) & 0xF];
+    for (u = 0; u < 40; u++) {
+        for (i = 0; i < 9; i++)
+            pal_buff[i + 2] = pal_logo[(i + scroll) & 0xF];
 
         scroll--;
 
-		VDP_setPalette(0, pal_buff);
+        VDP_setPalette(0, pal_buff);
         sleepFrames(4);
         joy = JOY_readJoypad(JOY_1);
-        if ((joy & (BUTTON_A | BUTTON_B | BUTTON_C | BUTTON_START)))break;
-	}
-	VDP_fadePalTo(0, palette_black, 16, 0);
-	//VDP_fadeTo(0, palette_black, 16, 0);
-	sleepFrames(32);
+        if (joy & (BUTTON_A | BUTTON_B | BUTTON_C | BUTTON_START))
+            break;
+    }
+    VDP_fadePalTo(0, palette_black, 16, 0);
+    //VDP_fadeTo(0, palette_black, 16, 0);
+    sleepFrames(32);
 }
 
 void showMessage() {
 
-	VDP_setPalette(0, palette_black);
-	VDP_fillTileMapRect (PLAN_B, 0, 0, 0, planWidth, planHeight);
+    VDP_setPalette(0, palette_black);
+    VDP_fillTileMapRect (PLAN_B, 0, 0, 0, planWidth, planHeight);
 
-//	VDP_fillTileMapRectInc(PLAN_B, RES_GFX_ADDR_KZZLOGO, 5, 4, 28, 7);
-	//VDP_fillTileRectInc(PLAN_B, RES_GFX_ADDR_KZZLOGO, 5, 4, 28, 8);
+//    VDP_fillTileMapRectInc(PLAN_B, RES_GFX_ADDR_KZZLOGO, 5, 4, 28, 7);
+    //VDP_fillTileRectInc(PLAN_B, RES_GFX_ADDR_KZZLOGO, 5, 4, 28, 8);
 //    u8 *check;
 //    u8 check_ctr = 0;
-			//char a[22];
-			//intToStr(tile_idx, a, 6);
+    //char a[22];
+    //intToStr(tile_idx, a, 6);
 //    uint16ToStr(GAME_VERSION, str_version, 200);
-    VDP_drawTextBG(PLAN_B, "battlecity-md vX.XX-X", (40 - sizeof ("battlecity-md vX.XX-X"))/2, 0);
-    VDP_drawTextBG(PLAN_B, GAME_VERSION, (40 - sizeof ("battlecity-md vX.XX-X"))/2 + sizeof ("battlecity-md "), 0);
-    VDP_drawTextBG(PLAN_B, GAME_BUILD, (40 - sizeof ("battlecity-md vX.XX-X"))/2 + sizeof ("battlecity-md vX.XX"), 0);
-    VDP_drawTextBG(PLAN_B, "game by KRIKzz 2009", (40 - sizeof ("game by KRIKzz 2009")) / 2, 2);
-    VDP_drawTextBG(PLAN_B, "mod by werton 2018", (40 - sizeof ("mod by werton 2018")) / 2, 4);
+    VDP_drawTextBG(PLAN_B, "battlecity-md vX.XX-X", (40 - sizeof("battlecity-md vX.XX-X"))/2, 0);
+    VDP_drawTextBG(PLAN_B, GAME_VERSION, (40 - sizeof("battlecity-md vX.XX-X"))/2 + sizeof("battlecity-md "), 0);
+    VDP_drawTextBG(PLAN_B, GAME_BUILD, (40 - sizeof("battlecity-md vX.XX-X"))/2 + sizeof("battlecity-md vX.XX"), 0);
+    VDP_drawTextBG(PLAN_B, "game by KRIKzz 2009", (40 - sizeof("game by KRIKzz 2009")) / 2, 2);
+    VDP_drawTextBG(PLAN_B, "mod by werton 2018", (40 - sizeof("mod by werton 2018")) / 2, 4);
 
-    VDP_drawTextBG(PLAN_B, "thanks to:", (40 - sizeof ("thanks to:")) / 2, 7);
-    VDP_drawTextBG(PLAN_B, "Stephane Dallongeville", (40 - sizeof ("Stephane Dallongeville")) / 2, 9);
-    VDP_drawTextBG(PLAN_B, "for incredible SGDK", (40 - sizeof ("for incredible SGDK")) / 2, 11);
-    VDP_drawTextBG(PLAN_B, "KRIKzz", (40 - sizeof ("KRIKzz")) / 2, 13);
-    VDP_drawTextBG(PLAN_B, "for source code of battlecity-md", (40 - sizeof ("for source code of battlecity-md")) / 2, 15);
-    VDP_drawTextBG(PLAN_B, "SPOT", (40 - sizeof ("SPOT")) / 2, 17);
-    VDP_drawTextBG(PLAN_B, "for help in code adaptation", (40 - sizeof ("for help in code adaptation")) / 2, 19);
-    VDP_drawTextBG(PLAN_B, "MASTERMAX", (40 - sizeof ("MASTERMAX")) / 2, 21);
-    VDP_drawTextBG(PLAN_B, "for TANK 1990 level's data", (40 - sizeof ("for TANK 1990 level's data")) / 2, 23);
-    VDP_drawTextBG(PLAN_B, "Sharpnull", (40 - sizeof ("Sharpnull")) / 2, 25);
-    VDP_drawTextBG(PLAN_B, "for testing and bugs fixing", (40 - sizeof ("for testing and bugs fixing")) / 2, 27);
+    VDP_drawTextBG(PLAN_B, "thanks to:", (40 - sizeof("thanks to:")) / 2, 7);
+    VDP_drawTextBG(PLAN_B, "Stephane Dallongeville", (40 - sizeof("Stephane Dallongeville")) / 2, 9);
+    VDP_drawTextBG(PLAN_B, "for incredible SGDK", (40 - sizeof("for incredible SGDK")) / 2, 11);
+    VDP_drawTextBG(PLAN_B, "KRIKzz", (40 - sizeof("KRIKzz")) / 2, 13);
+    VDP_drawTextBG(PLAN_B, "for source code of battlecity-md", (40 - sizeof("for source code of battlecity-md")) / 2, 15);
+    VDP_drawTextBG(PLAN_B, "SPOT", (40 - sizeof("SPOT")) / 2, 17);
+    VDP_drawTextBG(PLAN_B, "for help in code adaptation", (40 - sizeof("for help in code adaptation")) / 2, 19);
+    VDP_drawTextBG(PLAN_B, "MASTERMAX", (40 - sizeof("MASTERMAX")) / 2, 21);
+    VDP_drawTextBG(PLAN_B, "for TANK 1990 level's data", (40 - sizeof("for TANK 1990 level's data")) / 2, 23);
+    VDP_drawTextBG(PLAN_B, "Sharpnull", (40 - sizeof("Sharpnull")) / 2, 25);
+    VDP_drawTextBG(PLAN_B, "for testing and bugs fixing", (40 - sizeof("for testing and bugs fixing")) / 2, 27);
 
-	VDP_fadePalTo(0, pal_info_screen, 16, 0);
-	//VDP_fadeTo(0, pal_info_screen, 16, 0);
+    VDP_fadePalTo(0, pal_info_screen, 16, 0);
+    //VDP_fadeTo(0, pal_info_screen, 16, 0);
 
     u16 i;
     u16 joy;
@@ -173,11 +167,12 @@ void showMessage() {
     for (i = 0; i < 400; i++) {
         joy = JOY_readJoypad(JOY_1);
 
-        if ((joy & (BUTTON_A | BUTTON_B | BUTTON_C | BUTTON_START)))break;
+        if (joy & (BUTTON_A | BUTTON_B | BUTTON_C | BUTTON_START))
+            break;
         VDP_waitVSync();
-	}
-	VDP_fadePalTo(0, palette_black, 16, 0);
-	//VDP_fadeTo(0, palette_black, 16, 0);
+    }
+    VDP_fadePalTo(0, palette_black, 16, 0);
+    //VDP_fadeTo(0, palette_black, 16, 0);
 }
 
 
@@ -205,7 +200,7 @@ void config_init() {
     if (config.levels_pack == LEVELPACK_BC) {
         setMapsData(maps_data);
     }
-    else if (config.levels_pack == LEVELPACK_TANK){
+    else if (config.levels_pack == LEVELPACK_TANK) {
         setMapsData(maps_data2);
     }
 }

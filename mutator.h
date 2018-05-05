@@ -1,10 +1,5 @@
 #ifndef _MUTATOR_H
-#define	_MUTATOR_H
-
-
-
-extern u8 show_message;
-
+#define _MUTATOR_H
 
 enum {
     EN_ARMOR = 1,
@@ -12,12 +7,8 @@ enum {
     EN_URANIUM
 };
 
-
-
 void initMods();
 void showModText();
 
-
-
-#endif	/* _MUTATOR_H */
+#endif /* _MUTATOR_H */
 

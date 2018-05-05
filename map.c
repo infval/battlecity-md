@@ -24,7 +24,6 @@ void setMapEx(VDPPlan plan, const u8 *map, u8 game_mode, u8 fake) {
     }
 
     if (game_mode) {
-
         mapSetTile(0, START_X_EN_A + 0, 0);
         mapSetTile(0, START_X_EN_A + 1, 0);
         mapSetTile(0, START_X_EN_A + 0, 1);
@@ -40,7 +39,7 @@ void setMapEx(VDPPlan plan, const u8 *map, u8 game_mode, u8 fake) {
         mapSetTile(0, START_X_EN_C + 0, 1);
         mapSetTile(0, START_X_EN_C + 1, 1);
 
-		mapSetTile(0, START_X_PL_A + 0, START_Y_PL_A + 0);
+        mapSetTile(0, START_X_PL_A + 0, START_Y_PL_A + 0);
         mapSetTile(0, START_X_PL_A + 1, START_Y_PL_A + 0);
         mapSetTile(0, START_X_PL_A + 0, START_Y_PL_A + 1);
         mapSetTile(0, START_X_PL_A + 1, START_Y_PL_A + 1);
@@ -61,9 +60,9 @@ void setMapEx(VDPPlan plan, const u8 *map, u8 game_mode, u8 fake) {
 
 void mapSetTile(u16 val, u8 x, u8 y) {
 
-	current_map[x + y * MAP_H] = val;
-	VDP_setTileMapXY(map_plan, val, x + MAP_X, y + MAP_Y);
-	//VDP_setTile(map_plan, val, x + MAP_X, y + MAP_Y);
+    current_map[x + y * MAP_H] = val;
+    VDP_setTileMapXY(map_plan, val, x + MAP_X, y + MAP_Y);
+    //VDP_setTile(map_plan, val, x + MAP_X, y + MAP_Y);
 }
 
 u16 mapGetTile(u16 x, u16 y) {
@@ -73,9 +72,8 @@ u16 mapGetTile(u16 x, u16 y) {
 
 void mapRepaint() {
 
-	VDP_setTileMapDataRect(map_plan, current_map, MAP_X, MAP_Y, MAP_W, MAP_H);
-	//VDP_setTileRectDma(map_plan, current_map, MAP_X, MAP_Y, MAP_W, MAP_H);
-
+    VDP_setTileMapDataRect(map_plan, current_map, MAP_X, MAP_Y, MAP_W, MAP_H);
+    //VDP_setTileRectDma(map_plan, current_map, MAP_X, MAP_Y, MAP_W, MAP_H);
 }
 
 void setMap(VDPPlan plan, const u8 *map, u8 game_mode) {
@@ -117,34 +115,24 @@ void setMapsData(const u8 *map) {
 
 void openScreenEffect() {
     u8 i;
-
-
     VDP_fillTileMapRect(PLAN_A, RES_TILE_GREY, 0, 0, planWidth, planHeight);
     for (i = 14; i > 0; i--) {
         VDP_fillTileMapRect(PLAN_A, 0, 0, i, 32, 1);
         VDP_fillTileMapRect(PLAN_A, 0, 0, 28 - i, 32, 1);
         VDP_waitVSync();
-
     }
-
-
-
 }
 
 void closeScreenEffect() {
     u8 i;
-	for (i = 0; i < 15; i++) {
-		VDP_fillTileMapRect (PLAN_A, RES_TILE_GREY, 0, i, 32, 1);
-		VDP_fillTileMapRect (PLAN_A, RES_TILE_GREY, 0, 28 - i, 32, 1);
+    for (i = 0; i < 15; i++) {
+        VDP_fillTileMapRect (PLAN_A, RES_TILE_GREY, 0, i, 32, 1);
+        VDP_fillTileMapRect (PLAN_A, RES_TILE_GREY, 0, 28 - i, 32, 1);
         VDP_waitVSync();
-
     }
 
     VDP_fillTileMapRect(PLAN_B, RES_TILE_GREY, 0, 0, 32, 28);
     VDP_fillTileMapRect(PLAN_A, 0, 0, 0, planWidth, planHeight);
 
     VDP_waitVSync();
-
-
-
 }

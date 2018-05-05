@@ -24,24 +24,23 @@ void startMenu(s8 do_scroll) {
 
     selector = 0;
 
-
-    if (do_scroll) {scroll = -224;}
-
+    if (do_scroll) {
+        scroll = -224;
+    }
 
     u32 now_top = game_player[0].scor > game_player[1].scor ? game_player[0].scor : game_player[1].scor;
 
     VDP_setPalette(0, palette_black);
     VDP_resetSprites();
 
+    VDP_fillTileMapRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
 
-	VDP_fillTileMapRect (PLAN_B, 0, 0, 0, planWidth, planHeight);
-
-	setMap(PLAN_B, maps_data, 0);
+    setMap(PLAN_B, maps_data, 0);
 
     drawNum(top_scor, 136 / 8, 1);
-	drawNum(now_top, 56 / 8, 1);
-	VDP_setVerticalScroll(PLAN_B, scroll);
-	sleepFrames(1);
+    drawNum(now_top, 56 / 8, 1);
+    VDP_setVerticalScroll(PLAN_B, scroll);
+    sleepFrames(1);
     VDP_setPalette(0, pal_menu);
     VDP_setPalette(1, pal_yellow);
     _tank tank;
@@ -58,33 +57,26 @@ void startMenu(s8 do_scroll) {
     tank.freeze = 0;
     tank.bonus = 0;
 
-
     JOY_setEventHandler(startMenu_JoyEvent);
 
-
     while (scroll++) {
-
-		VDP_setVerticalScroll(PLAN_B, scroll);
-		VDP_waitVSync();
+        VDP_setVerticalScroll(PLAN_B, scroll);
+        VDP_waitVSync();
     }
     scroll = 0;
     VDP_setVerticalScroll(PLAN_B, 0);
 
-
     for (;;) {
-
-		tank.posy = SPRITE_POS_SELECTOR_Y + (selector << 4);
+        tank.posy = SPRITE_POS_SELECTOR_Y + (selector << 4);
         drawTank(&tank);
         updateSprite();
         VDP_waitVSync();
-        if (selected_item >= 0)break;
+        if (selected_item >= 0)
+            break;
     }
 
-    JOY_setEventHandler(0);
-
+    JOY_setEventHandler(NULL);
 }
-
-
 
 void modeMenu() {
 
@@ -95,15 +87,14 @@ void modeMenu() {
     VDP_setPalette(0, palette_black);
     VDP_resetSprites();
 
+    VDP_fillTileMapRect (PLAN_B, 0, 0, 0, planWidth, planHeight);
 
-	VDP_fillTileMapRect (PLAN_B, 0, 0, 0, planWidth, planHeight);
-
-	setMap(PLAN_B, menu_data, 0);
+    setMap(PLAN_B, menu_data, 0);
 
     drawNum(top_scor, 136 / 8, 1);
-	drawNum(now_top, 56 / 8, 1);
-	VDP_setVerticalScroll(PLAN_B, scroll);
-	sleepFrames(1);
+    drawNum(now_top, 56 / 8, 1);
+    VDP_setVerticalScroll(PLAN_B, scroll);
+    sleepFrames(1);
     VDP_setPalette(0, pal_menu);
     VDP_setPalette(1, pal_yellow);
     _tank tank;
@@ -120,29 +111,22 @@ void modeMenu() {
     tank.freeze = 0;
     tank.bonus = 0;
 
-
     JOY_setEventHandler(modeMenu_JoyEvent);
 
     config.game_mode = 0;
     for (;;) {
-
-		tank.posy = SPRITE_POS_SELECTOR_Y + (selector << 4);
+        tank.posy = SPRITE_POS_SELECTOR_Y + (selector << 4);
         drawTank(&tank);
         updateSprite();
         VDP_waitVSync();
-        if (config.game_mode > 0) break;
+        if (config.game_mode > 0)
+            break;
     }
 
-    JOY_setEventHandler(0);
-
+    JOY_setEventHandler(NULL);
 }
 
-
-
-
-
 s8 menuGetSelectedItem() {
-
     return selected_item;
 }
 
@@ -157,19 +141,21 @@ void startMenu_JoyEvent(u16 joy, u16 changed, u16 state) {
         if ((BUTTON_START & (state & changed)) && (BUTTON_A & state)) {
             selected_item = selector;
             if (selector == 3) {
-                    config.cheats_on = ON;
-                    soundPlay(snd_score_bonus, sizeof (snd_score_bonus), SOUND_PCM_CH1, 0);
+                config.cheats_on = ON;
+                soundPlay(snd_score_bonus, sizeof(snd_score_bonus), SOUND_PCM_CH1, FALSE);
             }
         }
 
         switch (state & changed) {
             case BUTTON_UP:
                 selector--;
-                if (selector < 0)selector = 3;
+                if (selector < 0)
+                    selector = 3;
                 break;
             case BUTTON_DOWN:
                 selector++;
-                if (selector > 3)selector = 0;
+                if (selector > 3)
+                    selector = 0;
                 break;
             case BUTTON_START:
                 selected_item = selector;
@@ -181,32 +167,32 @@ void startMenu_JoyEvent(u16 joy, u16 changed, u16 state) {
 
 void modeMenu_JoyEvent(u16 joy, u16 changed, u16 state) {
 
-        switch (state & changed) {
-            case BUTTON_UP:
-                selector--;
-                if (selector < 0)selector = 3;
-                break;
-            case BUTTON_DOWN:
-                selector++;
-                if (selector > 3)selector = 0;
-                break;
-            case BUTTON_START:
-                switch (selector) {
-                    case 0:
-                        config.game_mode = MODE_MODS;
-                        break;
-                    case 1:
-                        config.game_mode = MODE_BC;
-                        break;
-                    case 2:
-                        config.game_mode = MODE_TANK;
-                        break;
-                    case 3:
-                        config.game_mode = MODE_CUSTOM;
-                        break;
-                }
-
-                break;
-        }
-
+    switch (state & changed) {
+        case BUTTON_UP:
+            selector--;
+            if (selector < 0)
+                selector = 3;
+            break;
+        case BUTTON_DOWN:
+            selector++;
+            if (selector > 3)
+                selector = 0;
+            break;
+        case BUTTON_START:
+            switch (selector) {
+                case 0:
+                    config.game_mode = MODE_MODS;
+                    break;
+                case 1:
+                    config.game_mode = MODE_BC;
+                    break;
+                case 2:
+                    config.game_mode = MODE_TANK;
+                    break;
+                case 3:
+                    config.game_mode = MODE_CUSTOM;
+                    break;
+            }
+            break;
+    }
 }

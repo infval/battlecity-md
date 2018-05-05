@@ -23,14 +23,17 @@ void GRend_prepareRepaint() {
 
     if (scor.timer) {
         u16 scor_tile_addr = 184;
-        if (!pause)scor.timer--;
+        if (!pause)
+            scor.timer--;
         scor_tile_addr += scor.val << 2;
-        if (scor.val == 4)scor_tile_addr = 58;
+        if (scor.val == 4)
+            scor_tile_addr = 58;
         drawSprite2x2(scor_tile_addr, scor.posx, scor.posy);
     }
 
     for (i = 0; i < config.max_bullets; i++) {
-        if (!bullets[i].speed) continue;
+        if (!bullets[i].speed)
+            continue;
         drawSprite1x2(SPRITE_ADDR_BULLET + (bullets[i].rotate << 1),
             bullets[i].posx + bullet_sprite_offset_x[bullets[i].rotate],
             bullets[i].posy + bullet_sprite_offset_y[bullets[i].rotate]);
@@ -38,19 +41,18 @@ void GRend_prepareRepaint() {
 
     i = config.max_explode;
     while (i--) {
-        if (!explodes[i].type) continue;
+        if (!explodes[i].type)
+            continue;
         if (explodes[i].ani_counter > 2) {
-
             drawSprite8x8(SPRITE_EXPLODE_BIG + ((explodes[i].ani_counter - 3) << 4), explodes[i].posx - 8, explodes[i].posy - 8);
-            if ((explodes[i].strobe & 8)) {
+            if (explodes[i].strobe & 8) {
                 explodes[i].ani_counter++;
                 explodes[i].strobe = 0;
             }
-
         }
         else {
             drawSprite2x2(SPRITE_EXPLODE_SMALL + (explodes[i].ani_counter << 2), explodes[i].posx, explodes[i].posy);
-            if ((explodes[i].strobe & 2)) {
+            if (explodes[i].strobe & 2) {
                 explodes[i].ani_counter++;
                 explodes[i].strobe = 0;
             }
@@ -58,7 +60,6 @@ void GRend_prepareRepaint() {
         if (explodes[i].type == EXPLODE_BIG   && explodes[i].ani_counter > 4) explodes[i].type = 0;
         if (explodes[i].type == EXPLODE_SMALL && explodes[i].ani_counter > 2) explodes[i].type = 0;
         explodes[i].strobe++;
-
     }
 
     for (i = 0; i < config.units_on_map; i++) {
@@ -75,11 +76,11 @@ void GRend_repaint() {
     updateSprite();
     water_strobe++;
     if ((water_strobe & 63) == 0) {
-		VDP_setPaletteColor(/*0,*/ RES_COLOR_WATER2_ADDR, pal_red[RES_COLOR_WATER1_ADDR]);
-		VDP_setPaletteColor(/*0,*/ RES_COLOR_WATER3_ADDR, pal_red[RES_COLOR_WATER2_ADDR]);
-	}
+        VDP_setPaletteColor(/*0,*/ RES_COLOR_WATER2_ADDR, pal_red[RES_COLOR_WATER1_ADDR]);
+        VDP_setPaletteColor(/*0,*/ RES_COLOR_WATER3_ADDR, pal_red[RES_COLOR_WATER2_ADDR]);
+    }
     if ((water_strobe & 63) == 31) {
-		VDP_setPaletteColor(/*0,*/ RES_COLOR_WATER3_ADDR, pal_red[RES_COLOR_WATER1_ADDR]);
+        VDP_setPaletteColor(/*0,*/ RES_COLOR_WATER3_ADDR, pal_red[RES_COLOR_WATER1_ADDR]);
         VDP_setPaletteColor(/*0,*/ RES_COLOR_WATER2_ADDR, pal_red[RES_COLOR_WATER2_ADDR]);
     }
 }

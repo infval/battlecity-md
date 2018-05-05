@@ -41,7 +41,6 @@ s8 selector;
 s8 item_state;
 s8 item_state_shift;
 
-
 void startOption() {
 
     opt_selected_item = -1;
@@ -79,14 +78,10 @@ void startOption() {
     tank.freeze = 0;
     tank.bonus = 0;
 
-
     JOY_setEventHandler(joyEventOption);
 
-
     for (;;) {
-
         tank.posy = 60 + (selector << 4);
-
 
         drawTank(&tank);
 
@@ -99,17 +94,10 @@ void startOption() {
 
         updateSprite();
         VDP_waitVSync();
-
-
     }
 
-    JOY_setEventHandler(0);
-
+    JOY_setEventHandler(NULL);
 }
-
-
-
-
 
 void joyEventOption(u16 joy, u16 changed, u16 state) {
 //    item_state_shift = 0;
@@ -117,13 +105,17 @@ void joyEventOption(u16 joy, u16 changed, u16 state) {
     switch (state & changed) {
         case BUTTON_UP:
             selector--;
-            if (selector == 2) selector = 1;
-            if (selector < 0) selector = 3;
+            if (selector == 2)
+                selector = 1;
+            if (selector < 0)
+                selector = 3;
             break;
         case BUTTON_DOWN:
             selector++;
-            if (selector == 2) selector = 3;
-            if (selector > 3) selector = 0;
+            if (selector == 2)
+                selector = 3;
+            if (selector > 3)
+                selector = 0;
             break;
         case BUTTON_START:
             opt_selected_item = 3;
@@ -140,11 +132,9 @@ void joyEventOption(u16 joy, u16 changed, u16 state) {
             break;
     }
 
-
-    if ((item_state_shift == 1) || (item_state_shift == -1)) {
+    if (item_state_shift == 1 || item_state_shift == -1) {
         optionUpdateState(selector);
     }
-
 }
 
 void optionUpdateState(s8 item_to_update) {
@@ -155,7 +145,6 @@ void optionUpdateState(s8 item_to_update) {
         item_to_update = 0;
     }
 
-
     switch (item_to_update) {
 //        case 0:
 //            config.difficulty = shiftState(config.difficulty, 4);
@@ -165,29 +154,28 @@ void optionUpdateState(s8 item_to_update) {
 //                u8 seq[] = {69,65,83,89};
 //                drawText(seq, 4, 6);
 //            }
-//            else if (config.difficulty == 1){
+//            else if (config.difficulty == 1) {
 //                clearText(10, 6);
 //                u8 seq[] = {78,79,82,77,65,76};
 //                drawText(seq, 6, 6);
 //            }
-//            else if (config.difficulty == 2){
+//            else if (config.difficulty == 2) {
 //                clearText(10, 6);
 //                u8 seq[] = {72,65,82,68};
 //                drawText(seq, 4, 6);
 //            }
-//            else if (config.difficulty == 3){
+//            else if (config.difficulty == 3) {
 //                clearText(10, 6);
 //                u8 seq[] = {86,69,82,89,0,72,65,82,68};
 //                drawText(seq, 9, 6);
 //            }
-//            else if (config.difficulty == 4){
+//            else if (config.difficulty == 4) {
 //                clearText(10, 6);
 //                u8 seq[] = {77,65,68,78,69,83,83};
 //                drawText(seq, 7, 6);
 //            }
 //            if (!all) break;
         case 0:
-
             if (config.cheats_on) {
                 config.start_lives = shiftStateEx(config.start_lives, 3, CHEAT_LIVES);
             }
@@ -198,8 +186,6 @@ void optionUpdateState(s8 item_to_update) {
             drawNum(config.start_lives, 25, 8);
 
             if (!all) break;
-
-
         case 1:
             config.turbo_b = shiftState(config.turbo_b, 1);
             if (config.turbo_b) {
@@ -212,20 +198,16 @@ void optionUpdateState(s8 item_to_update) {
             }
 
             if (!all) break;
-
     }
 }
-
-
-
-
-
 
 u8 shiftState(u8 val, u8 max_state) {
     item_state = (s8)val;
     item_state += item_state_shift;
-    if (item_state > max_state) item_state = 0;
-    if (item_state < 0) item_state = max_state;
+    if (item_state > max_state)
+        item_state = 0;
+    if (item_state < 0)
+        item_state = max_state;
     item_state_shift = 0;
     return (u8)item_state;
 }
@@ -233,15 +215,18 @@ u8 shiftState(u8 val, u8 max_state) {
 u8 shiftStateEx(u8 val, u8 min_state, u8 max_state) {
     item_state = (s8)val;
     item_state += item_state_shift;
-    if (item_state > max_state) item_state = min_state;
-    if (item_state < min_state) item_state = max_state;
+    if (item_state > max_state)
+        item_state = min_state;
+    if (item_state < min_state)
+        item_state = max_state;
     item_state_shift = 0;
     return (u8)item_state;
 }
 
 void clearText(u8 width, u8 y) {
     u8 i;
-    for (i=26-width; i < 26; i++) mapSetTile(0, i, y);
+    for (i = 26 - width; i < 26; i++)
+        mapSetTile(0, i, y);
 }
 
 void drawOn(u8 x, u8 y) {
@@ -396,13 +381,10 @@ void drawShip(u8 x, u8 y) {
 //83,72,73,80,0,65,78,68,0,71,85,78
 void drawText(u8 *seq, u8 count, u8 y) {
     u8 i;
-    for (i=0; i<count; i++) {
-        mapSetTile(seq[i], 26-count+i, y);
+    for (i = 0; i < count; i++) {
+        mapSetTile(seq[i], 26 - count + i, y);
     }
 }
-
-
-
 
 void customGameOption() {
 
@@ -441,14 +423,10 @@ void customGameOption() {
     tank.freeze = 0;
     tank.bonus = 0;
 
-
     JOY_setEventHandler(joyEventCustomGameOption);
 
-
     for (;;) {
-
         tank.posy = 44 + (selector << 4);
-
 
         drawTank(&tank);
 
@@ -461,12 +439,9 @@ void customGameOption() {
 
         updateSprite();
         VDP_waitVSync();
-
-
     }
 
-    JOY_setEventHandler(0);
-
+    JOY_setEventHandler(NULL);
 }
 
 
@@ -478,13 +453,17 @@ void joyEventCustomGameOption(u16 joy, u16 changed, u16 state) {
     switch (state & changed) {
         case BUTTON_UP:
             selector--;
-            if (selector == 6) selector = 5;
-            if (selector < 0) selector = 7;
+            if (selector == 6)
+                selector = 5;
+            if (selector < 0)
+                selector = 7;
             break;
         case BUTTON_DOWN:
             selector++;
-            if (selector == 6) selector = 7;
-            if (selector > 7) selector = 0;
+            if (selector == 6)
+                selector = 7;
+            if (selector > 7)
+                selector = 0;
             break;
         case BUTTON_START:
             opt_selected_item = 7;
@@ -502,10 +481,9 @@ void joyEventCustomGameOption(u16 joy, u16 changed, u16 state) {
     }
 
 
-    if ((item_state_shift == 1) || (item_state_shift == -1)) {
+    if (item_state_shift == 1 || item_state_shift == -1) {
         customGameOptionUpdateState(selector);
     }
-
 }
 
 void customGameOptionUpdateState(s8 item_to_update) {
@@ -516,7 +494,6 @@ void customGameOptionUpdateState(s8 item_to_update) {
             item_to_update = 0;
         }
         switch (item_to_update) {
-
         case 0:
             config.levels_pack = shiftState(config.levels_pack, 3);
 
@@ -525,22 +502,21 @@ void customGameOptionUpdateState(s8 item_to_update) {
                 drawBC(15, 6);
                 setMapsData(maps_data);
             }
-            else if (config.levels_pack == LEVELPACK_TANK){
+            else if (config.levels_pack == LEVELPACK_TANK) {
                 clearText(11, 6);
                 drawTANK(17, 6);
                 setMapsData(maps_data2);
             }
-            else if (config.levels_pack == LEVELPACK_BC_TANK){
+            else if (config.levels_pack == LEVELPACK_BC_TANK) {
                 clearText(11, 6);
                 drawBC_TANK(19, 6);
                 setMapsData(maps_data);
             }
-            else if (config.levels_pack == LEVELPACK_TANK_BC){
+            else if (config.levels_pack == LEVELPACK_TANK_BC) {
                 clearText(11, 6);
                 drawTANK_BC(19, 6);
                 setMapsData(maps_data2);
             }
-
             if (!all) break;
         case 1:
             config.addition_bonus = shiftState(config.addition_bonus, 3);
@@ -571,12 +547,11 @@ void customGameOptionUpdateState(s8 item_to_update) {
                 clearText(10, 10);
                 drawOff(23, 10);
             }
-            else if (config.pl_friend_fire == BLOCK){
+            else if (config.pl_friend_fire == BLOCK) {
                 clearText(10, 10);
                 u8 seq[] = {66,76,73,78,75};
                 drawText(seq, 5, 10);
             }
-
             if (!all) break;
         case 3:
             config.en_bonus_collector = shiftState(config.en_bonus_collector, 1);

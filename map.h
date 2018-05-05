@@ -1,5 +1,5 @@
 #ifndef _MAP_H
-#define	_MAP_H
+#define _MAP_H
 
 #define MAP_W 26
 #define MAP_H 26
@@ -32,7 +32,6 @@
 #define START_X_ST 12
 #define START_Y_ST 24
 
-
 extern u16 current_map[];
 
 void setMap(VDPPlan plan, const u8 *map, u8 game_mode);
@@ -53,5 +52,6 @@ void mapRepaint();
 
 void openScreenEffect();
 void closeScreenEffect();
-#endif	/* _MAP_H */
+
+#endif /* _MAP_H */
 

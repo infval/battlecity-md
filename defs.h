@@ -1,31 +1,31 @@
 
 #ifndef _DEFS_H
-#define	_DEFS_H
+#define _DEFS_H
 
-#define	MODE_BC                     1
-#define	MODE_TANK                   2
-#define	MODE_MODS                   3
-#define	MODE_CUSTOM                 4
+#define MODE_BC                     1
+#define MODE_TANK                   2
+#define MODE_MODS                   3
+#define MODE_CUSTOM                 4
 
-#define	OFF                         0
-#define	ON                          1
+#define OFF                         0
+#define ON                          1
 
-#define	BLOCK                       1
-#define	BULLETS_STOP                2
-#define	KILL                        3
+#define BLOCK                       1
+#define BULLETS_STOP                2
+#define KILL                        3
 
 
-#define	LEVELPACK_BC                0
-#define	LEVELPACK_TANK              1
-#define	LEVELPACK_BC_TANK           2
-#define	LEVELPACK_TANK_BC           3
+#define LEVELPACK_BC                0
+#define LEVELPACK_TANK              1
+#define LEVELPACK_BC_TANK           2
+#define LEVELPACK_TANK_BC           3
 
-#define	LEVELS_ORDER_SERIAL         0
-#define	LEVELS_ORDER_RANDOM         1
+#define LEVELS_ORDER_SERIAL         0
+#define LEVELS_ORDER_RANDOM         1
 
 #define SHIP_BONUS                  1
 #define GUN_BONUS                   2
-#define	BOTH_BONUS                  3
+#define BOTH_BONUS                  3
 
 #define BONUS_GOD                   1
 #define BONUS_TIME                  2
@@ -36,38 +36,38 @@
 #define BONUS_GUN                   7
 #define BONUS_SHIP                  8
 
-#define	GAME_VERSION                "1.08"
-#define	GAME_BUILD                  "4"
+#define GAME_VERSION                "1.08"
+#define GAME_BUILD                  "4"
 
 
 // ================== GAME CONFIG ===================
 
 
-#define	SHOW_LOGOS                  1
-#define	SOUND_ON                    1
-#define	LEVEL_PACK                  LEVELPACK_BC
-#define	TURBO_B                     ON
-#define	PL_FRIENDLY_FIRE            BLOCK
-#define	EN_FRIENDLY_FIRE            OFF
-#define	EN_BONUS_COLLECTOR          OFF
+#define SHOW_LOGOS                  1
+#define SOUND_ON                    1
+#define LEVEL_PACK                  LEVELPACK_BC
+#define TURBO_B                     ON
+#define PL_FRIENDLY_FIRE            BLOCK
+#define EN_FRIENDLY_FIRE            OFF
+#define EN_BONUS_COLLECTOR          OFF
 
 #define START_LIVES                 3
 #define MAX_LIVES                   5
-#define	CHEAT_LIVES                 9
+#define CHEAT_LIVES                 9
 
-#define	ADDITIONAL_BONUS            OFF
-#define	CHEATS                      OFF
-
-
-#define	RANDOM_MODS                 1
-#define	MODS_COUNT                  1
-#define	MODS_INC                    3
-
-#define	DEBUG                       OFF
+#define ADDITIONAL_BONUS            OFF
+#define CHEATS                      OFF
 
 
+#define RANDOM_MODS                 1
+#define MODS_COUNT                  1
+#define MODS_INC                    3
 
-#define	MAX_ENEMIES                 6
+#define DEBUG                       OFF
+
+
+
+#define MAX_ENEMIES                 6
 //#define PLAYERS_ON_MAP              MAX_ENEMIES + 2
 
 
@@ -129,9 +129,7 @@ typedef struct {
 
 _config config;
 _mods mods;
-u8 stop_sound_engine;
-u8 playing_engine;
 
-#endif	/* _DEFS_H */
+#endif /* _DEFS_H */
 
 

@@ -1,5 +1,5 @@
 #ifndef _RESMAP_H
-#define	_RESMAP_H
+#define _RESMAP_H
 
 #define SEGA_LOGO_W 12
 #define SEGA_LOGO_H 4
@@ -25,14 +25,9 @@
 #define RES_TILE_P2 90
 #define RES_TILE_P 19
 
-
 #define RES_COLOR_WATER1_ADDR 6
 #define RES_COLOR_WATER2_ADDR 7
 #define RES_COLOR_WATER3_ADDR 8
-
-
-
-extern u16 spr_kl;
 
 extern u32 gfx_bonus[];
 
@@ -68,5 +63,5 @@ extern u8 game_config_data[];
 //extern u8 snd_bonus_take[7164];
 //extern u8 snd_gameover[18207];
 
-#endif	/* _RESMAP_H */
+#endif /* _RESMAP_H */
 

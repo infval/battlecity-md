@@ -1,9 +1,8 @@
 
 #ifndef _GAMELOGIC_H
-#define	_GAMELOGIC_H
+#define _GAMELOGIC_H
 
 #include "defs.h"
-
 
 #define EXPLODE_BIG 1
 #define EXPLODE_SMALL 2
@@ -63,8 +62,8 @@ typedef struct {
     s16 uranium_bullets;
     s16 dirt;
     s32 scor;
-	s16 hp;
-	s16 ship;
+    s16 hp;
+    s16 ship;
 
     s16 bullet_delay;
     s16 on_dirt;
@@ -90,11 +89,10 @@ extern const s8 speed_y[];
 extern _bonus bonus;
 extern u8 gameover;
 
-
 void GLog_updateGame();
 void GLog_initLEvel(u16 level);
 void GLog_killBullet(_bullet *bull, u8 explode);
-void GLog_killPLayer(_tank *victim, _tank *killer);
+void GLog_killPlayer(_tank *victim, _tank *killer);
 void GLog_killStaff();
 void GLog_initGameLogic();
 u8 GLog_gameover();
@@ -107,7 +105,7 @@ void setBonus(u8 player);
 void showScoreQuad(u16 val, u16 posx, u16 posy);
 void soundPlay(const u8 *sample, const u32 len, const u16 channel, const u8 loop);
 
-
 extern _scor scor;
-#endif	/* _GAMELOGIC_H */
+
+#endif /* _GAMELOGIC_H */
 

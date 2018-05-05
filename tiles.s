@@ -1,14 +1,14 @@
 
 
-	
-	.globl gfx_bonus
+    
+    .globl gfx_bonus
 gfx_bonus:
-	.incbin "gfx/bonus.bin"
-	
-	
-	
-	
-	
-	
-	
-	
+    .incbin "gfx/bonus.bin"
+    
+    
+    
+    
+    
+    
+    
+    

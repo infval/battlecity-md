@@ -17,37 +17,25 @@ void showGameoverWord();
 void setOrangeColor();
 void drawTankIcons();
 
-/*void sleepFrames(int i);
-
-void sleepFrames(int i){
-	int a;
-	for ( a = 0; a < i; a++) {
-      VDP_waitVSync ();
-	}
-}  */
-
-
 u8 num_buff[6];
 u8 tnk;
-u8 timer;
-u8 timer;
 u8 score1[5];
 u8 score2[5];
 
 void startGameOver() {
 
-
-
     u32 *save_ptr = (u32*) 0x200000;
     showScore();
-    if (top_scor < game_player[0].scor)top_scor = game_player[0].scor;
-    if (top_scor < game_player[1].scor)top_scor = game_player[1].scor;
+    if (top_scor < game_player[0].scor)
+        top_scor = game_player[0].scor;
+    if (top_scor < game_player[1].scor)
+        top_scor = game_player[1].scor;
     save_ptr[0] = top_scor;
     save_ptr[1] = ~top_scor;
     //save_ptr[1] = game_player[0].scor > game_player[1].scor ? game_player[0].scor : game_player[1].scor;
     showGameoverWord();
 }
-//
+
 void showScore() {
 //     test points
 //    kills_1[0] = 5;
@@ -58,7 +46,6 @@ void showScore() {
 //    kills_2[1] = 3;
 //    kills_2[2] = 10;
 //    kills_2[3] = 5;
-
 
     if (menuGetSelectedItem() == ITEM_ONE_PLAYER) {
         kills_2[0] = 0;
@@ -83,17 +70,15 @@ void showScore() {
 
     VDP_setPalette(0, palette_black);
 //    VDP_setPalette(1, palette_black);
-	VDP_fillTileMapRect(PLAN_A, 0, 0, 0, planWidth, planHeight);
-	VDP_fillTileMapRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
-//	VDP_fillTileMapRect(PLAN_B, 0, 0, 0, 32, 28);
-
-
+    VDP_fillTileMapRect(PLAN_A, 0, 0, 0, planWidth, planHeight);
+    VDP_fillTileMapRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
+//    VDP_fillTileMapRect(PLAN_B, 0, 0, 0, 32, 28);
 
     if (menuGetSelectedItem() == ITEM_ONE_PLAYER) {
-		setMap(PLAN_B, &maps_data[MAP_SCORE1 * MAP_LEN], 0);
+        setMap(PLAN_B, &maps_data[MAP_SCORE1 * MAP_LEN], 0);
     }
     else {
-		setMap(PLAN_B, &maps_data[MAP_SCORE2 * MAP_LEN], 0);
+        setMap(PLAN_B, &maps_data[MAP_SCORE2 * MAP_LEN], 0);
     }
 
     setOrangeColor();
@@ -107,9 +92,7 @@ void showScore() {
     game_player[0].scor += kills_1[0] * 100 + kills_1[1] * 200 + kills_1[2] * 300 + kills_1[3] * 400;
     game_player[1].scor += kills_2[0] * 100 + kills_2[1] * 200 + kills_2[2] * 300 + kills_2[3] * 400;
 
-
     for (;;) {
-
         drawTankIcons();
         drawNum(top_scor, 160 / 8, 1);
         drawNum(selected_stage + 1, 128 / 8, 24 / 8);
@@ -158,19 +141,14 @@ void showScore() {
                     drawNum(score2[4], 128 / 8, 168 / 8);
                 }
                 break;
-
-
         }
 
-        if (tnk <= 3)
-        {
-
+        if (tnk <= 3) {
             if  ((score1[tnk] == kills_1[tnk]) && (score2[tnk] == kills_2[tnk])) {
                 tnk += 1;
                 sleepFrames(18);
             }
-            else
-            {
+            else {
                 play_sound = FALSE;
                 if (score1[tnk] < kills_1[tnk]) {
                     score1[tnk] += 1;
@@ -183,16 +161,14 @@ void showScore() {
 
                 if (play_sound) {
                     SND_stopPlay_4PCM(SOUND_PCM_CH2);
-                    soundPlay(snd_score_tic, sizeof (snd_score_tic), SOUND_PCM_CH2, 0);
+                    soundPlay(snd_score_tic, sizeof(snd_score_tic), SOUND_PCM_CH2, FALSE);
                 }
 
             }
 
             sleepFrames(8);
         }
-        else
-        {
-
+        else {
             if (tnk > 4) {
                 sleepFrames(40);
                 tnk = 0;
@@ -207,26 +183,21 @@ void showScore() {
 
         VDP_waitVSync();
     }
-
-
 }
-
-
-
 
 void showGameoverWord() {
 
     VDP_setPalette(0, palette_black);
-	VDP_fillTileMapRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
-	//VDP_fillTileRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
-	setMap(PLAN_B, &maps_data[MAP_GAMEOVER * MAP_LEN], 0);
-	VDP_resetSprites();
-	VDP_updateSprites(1, FALSE);
-	//VDP_updateSprites();
+    VDP_fillTileMapRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
+    //VDP_fillTileRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
+    setMap(PLAN_B, &maps_data[MAP_GAMEOVER * MAP_LEN], 0);
+    VDP_resetSprites();
+    VDP_updateSprites(1, FALSE);
+    //VDP_updateSprites();
     VDP_setPalette(0, pal_red);
-    //startPlaySample(snd_gameover, sizeof (snd_gameover), 10000, AUDIO_PAN_CENTER, 9);
+    //startPlaySample(snd_gameover, sizeof(snd_gameover), 10000, AUDIO_PAN_CENTER, 9);
     SND_startPlay_PCM(snd_gameover, sizeof(snd_gameover), SOUND_RATE_22050, SOUND_PAN_CENTER, 0);
-	sleepFrames(128);
+    sleepFrames(128);
 }
 
 void setOrangeColor() {
@@ -251,11 +222,9 @@ void setOrangeColor() {
         tile |= TILE_ATTR(2, 0, 0, 0);
         mapSetTile(tile, i, 7);
     }
-
 }
 
 void drawTankIcons() {
-
 
     _tank t;
     t.god = 0;
@@ -269,7 +238,7 @@ void drawTankIcons() {
     t.bonus = 0;
     t.freeze = 0;
     t.rotate = 0;
-	t.ship = 0;
+    t.ship = 0;
     u16 i;
     updateSprite();
     for (i = 0; i < 4; i++) {
@@ -294,9 +263,11 @@ void drawNum(u32 num, u8 x, u8 y) {
     num_buff[5] = num % 1000000 / 100000;
 
     for (i = 0; i < 6; i++) {
-        if (num_buff[i] != 0)len = i + 1;
+        if (num_buff[i] != 0)
+            len = i + 1;
     }
-    if (len < 1)len = 1;
+    if (len < 1)
+        len = 1;
 
     for (i = 0; i < len; i++) {
         tile = mapGetTile(x, y);

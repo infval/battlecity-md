@@ -3,27 +3,20 @@
 //#include "stack.h"
 #include "defs.h"
 
-u8 show_message;
 void generateModsList();
 extern _mods mods;
-
 
 void initMods() {
     generateModsList();
 }
 
-
-
 void showModText() {
-    char *text[] = {"", "", "", "", "", "", ""};
+    char *text[] = { "", "", "", "", "", "", "" };
 //    u16 mods[MODS_COUNT];
-    u16 pos[] = {0, 0, 0, 0, 0, 0, 0};
+    u16 pos[] = { 0, 0, 0, 0, 0, 0, 0 };
     u16 nums = 0;
-//    char *txt[] = {"", "", "", "", "", "", "", "", "", ""};
-
-
+//    char *txt[] = { "", "", "", "", "", "", "", "", "", "" };
 //    int16ToStr(rnd, txt, 10);
-
 
     if (mods.en_armor) {
         nums += 1;
@@ -135,21 +128,14 @@ void showModText() {
     }
 }
 
-void hideText() {
-    show_message = FALSE;
-    VDP_clearTextLine(16);
-}
-
-
 void generateModsList() {
     s8 max_mods = 18;
     s8 mod_ind;
     s16 randomize;
     u8 i;
     u8 j;
-    u16 mod_indexes[] = {-1, -1, -1, -1, -1, -1};
+    u16 mod_indexes[] = { -1, -1, -1, -1, -1, -1 };
     u8 repeat = FALSE;
-
 
     mods.en_speed = 0;
     mods.en_armor = 0;
@@ -170,13 +156,11 @@ void generateModsList() {
     mods.pl_asskiller = 0;
     mods.en_invul = 0;
 
-    randomize = getTime (getTick ());
+    randomize = getTime(getTick());
     setRandomSeed (randomize);
 
     for (i = 0; i < config.mods_count; i++) {
-
-        do
-        {
+        do {
             repeat = FALSE;
             mod_ind = (random() % max_mods);
             mod_ind %= max_mods;
@@ -185,10 +169,9 @@ void generateModsList() {
                 if (mod_ind == mod_indexes[j]) {
                     repeat = TRUE;
                 }
-
             }
-            if (!repeat) mod_indexes[i] = mod_ind;
-
+            if (!repeat)
+                mod_indexes[i] = mod_ind;
 
 //            mod_ind ++;
             switch (mod_ind) {
@@ -252,10 +235,7 @@ void generateModsList() {
                     break;
             }
         } while (repeat);
-
     }
-
-
 //    return mod_indexes;
 }
 

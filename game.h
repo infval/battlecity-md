@@ -6,21 +6,16 @@
  */
 
 #ifndef _GAME_H
-#define	_GAME_H
+#define _GAME_H
 
-
-
-void sleepFrames(int i);
+void sleepFrames(u16 i);
 void startGame();
+void soundStopEngine();
 
 extern s16 selected_stage;
 extern u8 kills_1[4];
 extern u8 kills_2[4];
 extern u32 top_scor;
-extern u8 stop_sound_engine;
-extern u8 playing_engine;
-extern u16 level_timer;
 
-void soundStopEngine();
-#endif	/* _GAME_H */
+#endif /* _GAME_H */
 
