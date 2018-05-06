@@ -90,7 +90,7 @@ extern _bonus bonus;
 extern u8 gameover;
 
 void GLog_updateGame();
-void GLog_initLEvel(u16 level);
+void GLog_initLevel(u16 level);
 void GLog_killBullet(_bullet *bull, u8 explode);
 void GLog_killPlayer(_tank *victim, _tank *killer);
 void GLog_killStaff();

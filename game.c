@@ -221,7 +221,7 @@ void startLevel() {
 
     game_over_timer = 0;
 
-    GLog_initLEvel(selected_stage);
+    GLog_initLevel(selected_stage);
 
     for (i = 0; i < sizeof(kills_1) / sizeof(kills_1[0]); i++) {
         kills_1[i] = 0;

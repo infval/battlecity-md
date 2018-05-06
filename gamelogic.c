@@ -356,18 +356,25 @@ void GLog_killPlayer(_tank *victim, _tank *killer) {
                     victim->hitpoint--;
 
             }
-            else if (killer == &game_player[0] || killer == &game_player[1]) {
+            else { // if (killer == &game_player[0] || killer == &game_player[1]) {
                 if (victim->ship == 1) {
                     victim->ship = 0;
                 }
-                else {
-                    if (killer->rotate == victim->rotate) {
-                        if (mods.en_invul) {
-                            victim->freeze = 256;
+                else if (mods.en_invul) {
+                    victim->freeze = 256;
+                }
+                else { // if (mods.pl_asskiller) {
+                    s16 bull_rotate = -1;
+                    u16 i;
+                    // Looking for the killer's bullet after GLog_killBullet()
+                    for (i = 0; i < config.max_bullets; i++) {
+                        if (bullets[i].maker == killer && bullets[i].speed == 0) {
+                            bull_rotate = bullets[i].rotate;
+                            break;
                         }
-                        else {
-                            victim->hitpoint--;
-                        }
+                    }
+                    if (bull_rotate == victim->rotate) {
+                        victim->hitpoint--;
                     }
                     else {
                         victim->freeze = 256;
@@ -384,17 +391,13 @@ void GLog_killPlayer(_tank *victim, _tank *killer) {
     }
     if (!victim->hitpoint) {
         s16 v_type = victim->type;
+        if (!mods.en_pl_skin) {
+            v_type -= 4;
+        }
         if (killer == &game_player[0]) {
-            if (!mods.en_pl_skin) {
-                v_type -= 4;
-            }
             kills_1[v_type]++;
             showScoreQuad(v_type, victim->posx, victim->posy);
-        }
-        if (killer == &game_player[1]) {
-            if (!mods.en_pl_skin) {
-                v_type -= 4;
-            }
+        } else if (killer == &game_player[1]) {
             kills_2[v_type]++;
             showScoreQuad(v_type, victim->posx, victim->posy);
         }
@@ -765,7 +768,7 @@ void GLog_initEnemy() {
     if (mods.en_shielded) buff->god = 256;
 }
 
-void GLog_initLEvel(u16 level) {
+void GLog_initLevel(u16 level) {
 
     u16 i = 0;
     current_birth_time = 256 * (MAP_AVAILABLE - level % MAP_AVAILABLE) / MAP_AVAILABLE;
