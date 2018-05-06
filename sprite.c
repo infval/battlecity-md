@@ -68,7 +68,7 @@ void updateSprite() {
     sprite_counter++;
 
     if (sprite_counter < spr_kl) {
-        int ttt;
+        u16 ttt;
         u16 spr_kl2 = sprite_counter;
 
         for (ttt = 0; ttt < (spr_kl - spr_kl2); ttt++) {
