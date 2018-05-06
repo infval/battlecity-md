@@ -1,6 +1,7 @@
 
 
-#include "genesis.h"
+#include <genesis.h>
+#include <sram.h>
 #include "gameover.h"
 #include "map.h"
 #include "resmap.h"
@@ -24,15 +25,13 @@ u8 score2[5];
 
 void startGameOver() {
 
-    u32 *save_ptr = (u32*) 0x200000;
     showScore();
     if (top_scor < game_player[0].scor)
         top_scor = game_player[0].scor;
     if (top_scor < game_player[1].scor)
         top_scor = game_player[1].scor;
-    save_ptr[0] = top_scor;
-    save_ptr[1] = ~top_scor;
-    //save_ptr[1] = game_player[0].scor > game_player[1].scor ? game_player[0].scor : game_player[1].scor;
+    SRAM_writeLong(0, top_scor);
+    SRAM_writeLong(sizeof(u32), ~top_scor);
     showGameoverWord();
 }
 
@@ -47,23 +46,17 @@ void showScore() {
 //    kills_2[2] = 10;
 //    kills_2[3] = 5;
 
+    u8 i;
     if (menuGetSelectedItem() == ITEM_ONE_PLAYER) {
-        kills_2[0] = 0;
-        kills_2[1] = 0;
-        kills_2[2] = 0;
-        kills_2[3] = 0;
+        for (i = 0; i < sizeof(kills_2) / sizeof(kills_2[0]); i++) {
+            kills_2[i] = 0;
+        }
     }
 
-    score1[0] = 0;
-    score1[1] = 0;
-    score1[2] = 0;
-    score1[3] = 0;
-    score1[4] = 0;
-    score2[0] = 0;
-    score2[1] = 0;
-    score2[2] = 0;
-    score2[3] = 0;
-    score2[4] = 0;
+    for (i = 0; i < sizeof(score1) / sizeof(score1[0]); i++) {
+        score1[i] = 0;
+        score2[i] = 0;
+    }
 
     u16 joy;
     u8 play_sound;
@@ -91,6 +84,9 @@ void showScore() {
     score2[4] = kills_2[0] + kills_2[1] + kills_2[2] + kills_2[3];
     game_player[0].scor += kills_1[0] * 100 + kills_1[1] * 200 + kills_1[2] * 300 + kills_1[3] * 400;
     game_player[1].scor += kills_2[0] * 100 + kills_2[1] * 200 + kills_2[2] * 300 + kills_2[3] * 400;
+    // Bonus
+    game_player[0].scor += kills_1[4] * 500;
+    game_player[1].scor += kills_2[4] * 500;
 
     for (;;) {
         drawTankIcons();
@@ -231,6 +227,8 @@ void drawTankIcons() {
     t.birth = 0;
     t.hitpoint = 1;
     t.type = 4;
+    if (mods.en_pl_skin)
+        t.type = 0;
     t.posx = 97;
     t.posy = 77;
     t.color = TANK_COLOR_GREY;

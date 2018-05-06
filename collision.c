@@ -1,5 +1,5 @@
 
-#include "genesis.h"
+#include <genesis.h>
 #include "collision.h"
 #include "map.h"
 #include "gamelogic.h"

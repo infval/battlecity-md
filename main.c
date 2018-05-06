@@ -1,4 +1,5 @@
 #include <genesis.h>
+#include <sram.h>
 #include "resmap.h"
 #include "defs.h"
 #include "map.h"
@@ -53,6 +54,7 @@ int main() {
             continue;
         }
         else if ((menuGetSelectedItem() == ITEM_ONE_PLAYER) || (menuGetSelectedItem() == ITEM_TWO_PLAYER)) {
+            setRandomSeed(getTime(getTick()));
             modeMenu();
         }
 
@@ -68,7 +70,6 @@ int main() {
 
 void init() {
 
-    u32 *save_ptr = (u32*) 0x20000;
     VDP_loadTileData(gfx_bonus, 800, 8*4+4, 0);
     VDP_loadTileData(game_gfx, RES_GFX_ADDR_GAME, RES_GFX_SIZE_GAME, 0);
     VDP_loadTileData(logo_gfx, RES_GFX_ADDR_LOGO, RES_GFX_SIZE_LOGO, 0);
@@ -76,13 +77,14 @@ void init() {
     spriteInit();
     map_editor_map_ready = FALSE;
 
-    top_scor = save_ptr[0];
-    if (top_scor != ~save_ptr[1]) top_scor = 0;
+    top_scor = SRAM_readLong(0);
+    if (top_scor != ~SRAM_readLong(sizeof(u32)))
+        top_scor = 0;
 
     if (top_scor < 20000) {
         top_scor = 20000;
-        save_ptr[0] = top_scor;
-        save_ptr[1] = ~top_scor;
+        SRAM_writeLong(0, top_scor);
+        SRAM_writeLong(sizeof(u32), ~top_scor);
     }
     game_player[0].scor = 0;
     game_player[1].scor = 0;

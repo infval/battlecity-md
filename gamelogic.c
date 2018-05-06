@@ -1,4 +1,4 @@
-#include "genesis.h"
+#include <genesis.h>
 #include "defs.h"
 #include "gamelogic.h"
 #include "menu.h"
@@ -383,16 +383,22 @@ void GLog_killPlayer(_tank *victim, _tank *killer) {
         //if (victim->hitpoint) soundPlay(snd_bull_stop, sizeof(snd_bull_stop), SOUND_PCM_CH3, FALSE);
     }
     if (!victim->hitpoint) {
+        s16 v_type = victim->type;
         if (killer == &game_player[0]) {
-            kills_1[victim->type - 4]++;
-            showScoreQuad(victim->type - 4, victim->posx, victim->posy);
+            if (!mods.en_pl_skin) {
+                v_type -= 4;
+            }
+            kills_1[v_type]++;
+            showScoreQuad(v_type, victim->posx, victim->posy);
         }
         if (killer == &game_player[1]) {
-            kills_2[victim->type - 4]++;
-            showScoreQuad(victim->type - 4, victim->posx, victim->posy);
+            if (!mods.en_pl_skin) {
+                v_type -= 4;
+            }
+            kills_2[v_type]++;
+            showScoreQuad(v_type, victim->posx, victim->posy);
         }
 
-        killer->scor += (victim->type - 3) * 100;
         GLog_makeExplode(EXPLODE_BIG, victim->posx, victim->posy);
 
         if (victim == &game_player[0] || victim == &game_player[1]) {
@@ -1057,7 +1063,7 @@ void setBonus(u8 player) {
             }
             else {
                 enemy_num += 3;
-                soundPlay(snd_bonus_got, sizeof(snd_live_got), SOUND_PCM_CH1, FALSE);
+                soundPlay(snd_bonus_got, sizeof(snd_bonus_got), SOUND_PCM_CH1, FALSE);
             }
             break;
         case BONUS_GUN:
@@ -1089,6 +1095,12 @@ void setBonus(u8 player) {
     }
     showScoreQuad(4, bonus.posx, bonus.posy);
     bonus.type = 0;
+
+    if (player == 0) {
+        kills_1[4]++;
+    } else if (player == 1) {
+        kills_2[4]++;
+    }
 }
 
 void updateArmorStaff() {

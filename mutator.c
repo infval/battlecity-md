@@ -1,4 +1,4 @@
-#include "genesis.h"
+#include <genesis.h>
 #include "mutator.h"
 //#include "stack.h"
 #include "defs.h"
@@ -94,8 +94,6 @@ void generateModsList() {
     mods.pl_shieldless = 0;
     mods.pl_asskiller = 0;
     mods.en_invul = 0;
-
-    setRandomSeed(getTime(getTick()));
 
     u8 i;
     u16 mod_indexes[MAX_MODS];

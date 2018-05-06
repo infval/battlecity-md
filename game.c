@@ -1,5 +1,5 @@
 
-#include "genesis.h"
+#include <genesis.h>
 #include "game.h"
 #include "map.h"
 #include "resmap.h"
@@ -39,8 +39,8 @@ void sleepFrames(u16 i) {
     }
 }
 
-u8 kills_1[4];
-u8 kills_2[4];
+u8 kills_1[5]; // 0-3 - Tanks, 4 - Bonus
+u8 kills_2[5];
 u32 top_scor;
 u16 level_timer;
 
@@ -223,7 +223,7 @@ void startLevel() {
 
     GLog_initLEvel(selected_stage);
 
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < sizeof(kills_1) / sizeof(kills_1[0]); i++) {
         kills_1[i] = 0;
         kills_2[i] = 0;
     }

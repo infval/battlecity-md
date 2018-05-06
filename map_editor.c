@@ -1,5 +1,5 @@
 
-#include "genesis.h"
+#include <genesis.h>
 #include "map.h"
 #include "map_editor.h"
 #include "resmap.h"

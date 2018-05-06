@@ -13,8 +13,8 @@ void startGame();
 void soundStopEngine();
 
 extern s16 selected_stage;
-extern u8 kills_1[4];
-extern u8 kills_2[4];
+extern u8 kills_1[5];
+extern u8 kills_2[5];
 extern u32 top_scor;
 
 #endif /* _GAME_H */
