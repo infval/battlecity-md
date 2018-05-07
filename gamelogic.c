@@ -78,6 +78,8 @@ u16 current_birth_time;
 u16 pause;
 _scor scor;
 
+_bullet* last_killed_bullet = NULL;
+
 void GLog_updateMove() {
 
     u16 i;
@@ -306,6 +308,8 @@ void GLog_killBullet(_bullet *bull, u8 explode) {
     bull->maker->bullets_count--;
     if (bull->maker->bullets_count < 0)
         bull->maker->bullets_count = 0;
+
+    last_killed_bullet = bull;
 }
 
 void GLog_killPlayer(_tank *victim, _tank *killer) {
@@ -364,16 +368,7 @@ void GLog_killPlayer(_tank *victim, _tank *killer) {
                     victim->freeze = 256;
                 }
                 else { // if (mods.pl_asskiller) {
-                    s16 bull_rotate = -1;
-                    u16 i;
-                    // Looking for the killer's bullet after GLog_killBullet()
-                    for (i = 0; i < config.max_bullets; i++) {
-                        if (bullets[i].maker == killer && bullets[i].speed == 0) {
-                            bull_rotate = bullets[i].rotate;
-                            break;
-                        }
-                    }
-                    if (bull_rotate == victim->rotate) {
+                    if (last_killed_bullet != NULL && last_killed_bullet->rotate == victim->rotate) {
                         victim->hitpoint--;
                     }
                     else {

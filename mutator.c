@@ -3,9 +3,10 @@
 //#include "stack.h"
 #include "defs.h"
 
-void generateModsList();
 extern _mods mods;
 #define MAX_MODS (sizeof(_mods) / sizeof(u8))
+
+void generateModsList();
 
 void initMods() {
     generateModsList();
@@ -32,37 +33,12 @@ static const char* mods_text[] = {
     , "the enemy is invulnerable"
 };
 
+static const char *text[6] = { 0 };
+
 void showModText() {
-    const char *text[] = { "", "", "", "", "", "", "" };
-    u16 pos[] = { 0, 0, 0, 0, 0, 0, 0 };
-    u16 nums = 0;
-
-    s16 i;
-    u8* p_mods = (u8*)&mods;
-    for (i = 0; i < MAX_MODS; i++) {
-        if (p_mods[i]) {
-            nums++;
-            text[nums] = mods_text[i];
-            pos[nums] = strlen(mods_text[i]);
-        }
-    }
-
-    switch (nums) {
-        case 6:
-            VDP_drawTextBG(PLAN_A, text[6], 16-pos[6]/2, 26);
-        case 5:
-            VDP_drawTextBG(PLAN_A, text[5], 16-pos[5]/2, 24);
-        case 4:
-            VDP_drawTextBG(PLAN_A, text[4], 16-pos[4]/2, 22);
-        case 3:
-            VDP_drawTextBG(PLAN_A, text[3], 16-pos[3]/2, 20);
-        case 2:
-            VDP_drawTextBG(PLAN_A, text[2], 16-pos[2]/2, 18);
-        case 1:
-            VDP_drawTextBG(PLAN_A, text[1], 16-pos[1]/2, 16);
-            break;
-        case 0:
-            break;
+    u8 i;
+    for (i = 0; i < config.mods_count; i++) {
+        VDP_drawTextBG(PLAN_A, text[i], 16 - strlen(text[i]) / 2, 16 + i*2);
     }
 }
 
@@ -102,6 +78,7 @@ void generateModsList() {
     }
     shuffle_u16(mod_indexes, MAX_MODS);
     for (i = 0; i < config.mods_count; i++) {
+        text[i] = mods_text[mod_indexes[i]];
         switch (mod_indexes[i]) {
             case  0: mods.en_speed = 1;       break;
             case  1: mods.en_armor = 1;       break;
