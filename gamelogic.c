@@ -903,10 +903,10 @@ void drawStage() {
     u16 num;
     u16 x = MAP_X + MAP_W + 1;
     u16 y = MAP_Y + 21;
-    VDP_setTile(PLAN_B, 108, x, y);
-    VDP_setTile(PLAN_B, 109, x, y + 1);
-    VDP_setTile(PLAN_B, 44, x + 1, y);
-    VDP_setTile(PLAN_B, 45, x + 1, y + 1);
+    VDP_setTile(PLAN_B, RES_TILE_FLAG, x, y);
+    VDP_setTile(PLAN_B, RES_TILE_FLAG+1, x, y + 1);
+    VDP_setTile(PLAN_B, RES_TILE_FLAG+2, x + 1, y);
+    VDP_setTile(PLAN_B, RES_TILE_FLAG+3, x + 1, y + 1);
 
     num = (selected_stage + 1) / 10;
     if (num != 0)

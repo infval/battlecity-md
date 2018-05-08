@@ -22,13 +22,9 @@ void GRend_prepareRepaint() {
     }
 
     if (scor.timer) {
-        u16 scor_tile_addr = 184;
         if (!pause)
             scor.timer--;
-        scor_tile_addr += scor.val << 2;
-        if (scor.val == 4)
-            scor_tile_addr = 58;
-        drawSprite2x2(scor_tile_addr, scor.posx, scor.posy);
+        drawSprite2x2(SPRITE_ADDR_SCORE + (scor.val << 2), scor.posx, scor.posy);
     }
 
     for (i = 0; i < config.max_bullets; i++) {
