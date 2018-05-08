@@ -205,16 +205,32 @@ u8 moveAvailableInWalls(_tank *tank) {
     u16 i3 = FALSE;
     u16 i4 = FALSE;
     tile_idx &= 0x1FF;
-    if (tile_idx == 0 || tile_idx == 35 || tile_idx == 34 || tile_idx == 33 || (tank->ship == 1 && tile_idx == 18)) i1 = TRUE;
+    if (tile_idx == 0
+    // || tile_idx == 35
+     || tile_idx == RES_TILE_GRASS
+     || tile_idx == RES_TILE_DIRT
+     || (tank->ship == 1 && tile_idx == RES_TILE_WATER)) i1 = TRUE;
     tile_idx = mapGetTile(x2, y1);
     tile_idx &= 0x1FF;
-    if (tile_idx == 0 || tile_idx == 35 || tile_idx == 34 || tile_idx == 33 || (tank->ship == 1 && tile_idx == 18)) i2 = TRUE;
+    if (tile_idx == 0
+    // || tile_idx == 35
+     || tile_idx == RES_TILE_GRASS
+     || tile_idx == RES_TILE_DIRT
+     || (tank->ship == 1 && tile_idx == RES_TILE_WATER)) i2 = TRUE;
     tile_idx = mapGetTile(x1, y2);
     tile_idx &= 0x1FF;
-    if (tile_idx == 0 || tile_idx == 35 || tile_idx == 34 || tile_idx == 33 || (tank->ship == 1 && tile_idx == 18)) i3 = TRUE;
+    if (tile_idx == 0
+    // || tile_idx == 35
+     || tile_idx == RES_TILE_GRASS
+     || tile_idx == RES_TILE_DIRT
+     || (tank->ship == 1 && tile_idx == RES_TILE_WATER)) i3 = TRUE;
     tile_idx = mapGetTile(x2, y2);
     tile_idx &= 0x1FF;
-    if (tile_idx == 0 || tile_idx == 35 || tile_idx == 34 || tile_idx == 33 || (tank->ship == 1 && tile_idx == 18)) i4 = TRUE;
+    if (tile_idx == 0
+    // || tile_idx == 35
+     || tile_idx == RES_TILE_GRASS
+     || tile_idx == RES_TILE_DIRT
+     || (tank->ship == 1 && tile_idx == RES_TILE_WATER)) i4 = TRUE;
     if (i1 && i2 && i3 && i4)
         return TRUE;
 

@@ -260,7 +260,7 @@ void GLog_updateBonus() {
     if (mods.en_invul) {
         if (getTimer(1, 0) > 2000000) {
 //        if (getTimer(1, 0) > 900000) {
-            generateBonus(5);
+            generateBonus(BONUS_BOMB);
 //            generateBonus(2);
             startTimer(1);
         }
@@ -342,12 +342,22 @@ void GLog_killPlayer(_tank *victim, _tank *killer) {
             }
         }
         else {
-            if ((!mods.pl_asskiller && !mods.en_invul) || (killer != &game_player[0] && killer != &game_player[1]) ) {
-                if (victim->ship == 1) {
-                    victim->ship = 0;
+            if (victim->ship == 1) {
+                victim->ship = 0;
+                s16 x1 = victim->posx >> 3;
+                s16 y1 = victim->posy >> 3;
+                s16 x2 = (victim->posx + 15) >> 3;
+                s16 y2 = (victim->posy + 15) >> 3;
+                // If you can't swim, then die
+                if (mapGetTile(x1, y1) == RES_TILE_WATER
+                 || mapGetTile(x2, y1) == RES_TILE_WATER
+                 || mapGetTile(x1, y2) == RES_TILE_WATER
+                 || mapGetTile(x2, y2) == RES_TILE_WATER) {
+                    victim->hitpoint = 0;
                 }
-                else if (victim->hp == 1)
-                {
+            }
+            else if ((!mods.pl_asskiller && !mods.en_invul) || (killer != &game_player[0] && killer != &game_player[1]) ) {
+                if (victim->hp == 1) {
                     victim->type = 0;
                     victim->hitpoint = 1;
                     victim->speed = TANK_SPEED_1;
@@ -356,15 +366,12 @@ void GLog_killPlayer(_tank *victim, _tank *killer) {
                     victim->uranium_bullets = 0;
                     victim->hp = 0;
                 }
-                else if (victim->hp != 1 && victim->ship != 1)
+                else if (victim->hp != 1) // && victim->ship != 1)
                     victim->hitpoint--;
 
             }
             else { // if (killer == &game_player[0] || killer == &game_player[1]) {
-                if (victim->ship == 1) {
-                    victim->ship = 0;
-                }
-                else if (mods.en_invul) {
+                if (mods.en_invul) {
                     victim->freeze = 256;
                 }
                 else { // if (mods.pl_asskiller) {
@@ -385,16 +392,18 @@ void GLog_killPlayer(_tank *victim, _tank *killer) {
         //if (victim->hitpoint) soundPlay(snd_bull_stop, sizeof(snd_bull_stop), SOUND_PCM_CH3, FALSE);
     }
     if (!victim->hitpoint) {
-        s16 v_type = victim->type;
-        if (!mods.en_pl_skin) {
-            v_type -= 4;
-        }
-        if (killer == &game_player[0]) {
-            kills_1[v_type]++;
-            showScoreQuad(v_type, victim->posx, victim->posy);
-        } else if (killer == &game_player[1]) {
-            kills_2[v_type]++;
-            showScoreQuad(v_type, victim->posx, victim->posy);
+        if (victim != &game_player[0] && victim != &game_player[1]) {
+            s16 v_type = victim->type;
+            if (!mods.en_pl_skin) {
+                v_type -= 4;
+            }
+            if (killer == &game_player[0]) {
+                kills_1[v_type]++;
+                showScoreQuad(v_type, victim->posx, victim->posy);
+            } else if (killer == &game_player[1]) {
+                kills_2[v_type]++;
+                showScoreQuad(v_type, victim->posx, victim->posy);
+            }
         }
 
         GLog_makeExplode(EXPLODE_BIG, victim->posx, victim->posy);

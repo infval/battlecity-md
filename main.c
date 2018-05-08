@@ -70,7 +70,6 @@ int main() {
 
 void init() {
 
-    VDP_loadTileData(gfx_bonus, 800, 8*4+4, 0);
     VDP_loadTileData(game_gfx, RES_GFX_ADDR_GAME, RES_GFX_SIZE_GAME, 0);
     VDP_loadTileData(logo_gfx, RES_GFX_ADDR_LOGO, RES_GFX_SIZE_LOGO, 0);
 

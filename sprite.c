@@ -113,7 +113,7 @@ void drawTank(_tank *sprite) {
     }
 
     if (sprite->ship == 1) {
-        drawSprite2x2(800+8*4, sprite->posx, sprite->posy);
+        drawSprite2x2(SPRITE_ADDR_SHIP, sprite->posx, sprite->posy);
     }
 
     color = sprite->color;
