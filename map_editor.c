@@ -17,7 +17,7 @@ u8 moved;
 #define MAX_OBJECTS 14
 
 void joyEventEditor(u16 joy, u16 changed, u16 state);
-void setObjrct();
+void setObject();
 
 const u8 map_objects[] = {
 
@@ -72,19 +72,29 @@ void startMapEditor() {
     u16 cross_press_timer = 0;
     u8 selector_blink_counter = 0;
     moved = 0;
-    _tank tank;
     VDP_setPalette(0, palette_black);
     VDP_resetSprites();
     VDP_updateSprites(1, TRUE);
     //VDP_updateSpritesDma();
 
-    VDP_fillTileMapRect (PLAN_B, RES_TILE_GREY, 0, 0, 32, 28);
+    VDP_fillTileMapRect(PLAN_B, RES_TILE_GREY, 0, 0, 32, 28);
 
     if (!map_editor_map_ready) {
-        setMap(PLAN_B, maps_data + MAP_LEN * MAP_EDITOR, 0);
+        memset(editor_map, 0, sizeof(editor_map));
+        setMap(PLAN_B, editor_map, FALSE);
+        mapSetTile(RES_TILE_STAFF + 0, START_X_ST + 0, START_Y_ST + 0);
+        mapSetTile(RES_TILE_STAFF + 1, START_X_ST + 0, START_Y_ST + 1);
+        mapSetTile(RES_TILE_STAFF + 2, START_X_ST + 1, START_Y_ST + 0);
+        mapSetTile(RES_TILE_STAFF + 3, START_X_ST + 1, START_Y_ST + 1);
+        s8 brick_x[8] = { -1, -1, -1,  0,  1,  2,  2,  2 };
+        s8 brick_y[8] = {  1,  0, -1, -1, -1, -1,  0,  1 };
+        u8 i;
+        for (i = 0; i < 8; i++) {
+            mapSetTile(RES_TILE_BRICK, START_X_ST + brick_x[i], START_Y_ST + brick_y[i]);
+        }
     }
     else {
-        setMap(PLAN_B, editor_map, 0);
+        setMap(PLAN_B, editor_map, FALSE);
     }
 
     map_editor_map_ready = FALSE;
@@ -95,12 +105,8 @@ void startMapEditor() {
     selector_x = 0;
     selector_y = 0;
     JOY_setEventHandler(joyEventEditor);
-    tank.color = TANK_COLOR_RED;
-    tank.posx = 0;
-    tank.posy = 0;
-    tank.rotate = 0;
-    tank.type = 0;
-    tank.color = TANK_COLOR_YELLOW;
+    s16 posx = 0;
+    s16 posy = 0;
 
     for (; !map_editor_map_ready;) {
 
@@ -116,18 +122,13 @@ void startMapEditor() {
                 joyEventEditor(JOY_1, 0, joy);
         }
 
-        tank.posx = selector_x << 4;
-        tank.posy = selector_y << 4;
+        posx = selector_x << 4;
+        posy = selector_y << 4;
         selector_blink_counter++;
-        if (((selector_blink_counter >> 4) & 1)) {
-            drawTank(&tank);
-            updateSprite();
+        if ((selector_blink_counter >> 4) & 1) {
+            drawSprite2x2(SPRITE_ADDR_TANK | TILE_ATTR(TANK_COLOR_YELLOW, 0, 0, 0), posx, posy);
         }
-        else {
-            VDP_resetSprites();
-            //VDP_updateSprites  ();
-            //VDP_updateSpritesDma();
-        }
+        updateSprite();
 
         VDP_waitVSync();
     }
@@ -167,7 +168,6 @@ void joyEventEditor(u16 joy, u16 changed, u16 state) {
             selector_x = MAP_W / 2 - 1;
     }
     if (BUTTON_START & state) {
-
         for (i = 0; i < MAP_LEN; i++)
             editor_map[i] = (u8) current_map[i];
         map_editor_map_ready = TRUE;
@@ -179,7 +179,7 @@ void joyEventEditor(u16 joy, u16 changed, u16 state) {
             if (object_selector >= MAX_OBJECTS)
                 object_selector = 0;
         }
-        setObjrct();
+        setObject();
         moved = 0;
     }
     if (BUTTON_C & state) {
@@ -188,12 +188,12 @@ void joyEventEditor(u16 joy, u16 changed, u16 state) {
             if (object_selector < 0)
                 object_selector = MAX_OBJECTS - 1;
         }
-        setObjrct();
+        setObject();
         moved = 0;
     }
 }
 
-void setObjrct() {
+void setObject() {
 
     mapSetTile(map_objects[(object_selector << 2)    ],  selector_x << 1,       selector_y << 1);
     mapSetTile(map_objects[(object_selector << 2) + 1], (selector_x << 1) + 1,  selector_y << 1);

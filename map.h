@@ -9,13 +9,11 @@
 #define MAP_PIXEL_Y (MAP_Y << 3)
 #define MAP_LEN MAP_W * MAP_H
 #define MAP_START_MENU 0
-#define MAP_EDITOR 1
-#define MAP_GAMEOVER 2
-#define MAP_SCORE1 3
-#define MAP_SCORE2 4
-#define MAP_GAME_MAP 5
+#define MAP_GAMEOVER 1
+#define MAP_SCORE1 2
+#define MAP_SCORE2 3
+#define MAP_GAME_MAP 4
 #define MAP_AVAILABLE 35
-#define MAP_OPTION 40
 
 #define MAP_COUNT 70
 
@@ -39,11 +37,6 @@ void setMapEx(VDPPlan plan, const u8 *map, u8 game_mode, u8 fake);
 void setFakeMap(const u8 *map, u8 game_mode);
 void setMapLevel(u8 lvl);
 void setFakeMapLevel(u8 lvl);
-void setMenuMap();
-void setEmptyEditorMap();
-void setGameOverMap();
-void setScore1Map();
-void setScore2Map();
 void setMapsData(const u8 *map);
 void mapSetTile(u16 val, u8 x, u8 y);
 u16 mapGetTile(u16 x, u16 y);

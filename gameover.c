@@ -68,10 +68,10 @@ void showScore() {
 //    VDP_fillTileMapRect(PLAN_B, 0, 0, 0, 32, 28);
 
     if (menuGetSelectedItem() == ITEM_ONE_PLAYER) {
-        setMap(PLAN_B, &maps_data[MAP_SCORE1 * MAP_LEN], 0);
+        setMap(PLAN_B, &maps_data[MAP_SCORE1 * MAP_LEN], FALSE);
     }
     else {
-        setMap(PLAN_B, &maps_data[MAP_SCORE2 * MAP_LEN], 0);
+        setMap(PLAN_B, &maps_data[MAP_SCORE2 * MAP_LEN], FALSE);
     }
 
     setOrangeColor();
@@ -186,7 +186,7 @@ void showGameoverWord() {
     VDP_setPalette(0, palette_black);
     VDP_fillTileMapRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
     //VDP_fillTileRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
-    setMap(PLAN_B, &maps_data[MAP_GAMEOVER * MAP_LEN], 0);
+    setMap(PLAN_B, &maps_data[MAP_GAMEOVER * MAP_LEN], FALSE);
     VDP_resetSprites();
     VDP_updateSprites(1, FALSE);
     //VDP_updateSprites();

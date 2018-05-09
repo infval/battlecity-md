@@ -132,7 +132,7 @@ void showSegaLogo() {
 void showMessage() {
 
     VDP_setPalette(0, palette_black);
-    VDP_fillTileMapRect (PLAN_B, 0, 0, 0, planWidth, planHeight);
+    VDP_fillTileMapRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
 
 //    VDP_fillTileMapRectInc(PLAN_B, RES_GFX_ADDR_KZZLOGO, 5, 4, 28, 7);
     //VDP_fillTileRectInc(PLAN_B, RES_GFX_ADDR_KZZLOGO, 5, 4, 28, 8);

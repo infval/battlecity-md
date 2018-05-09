@@ -797,10 +797,10 @@ void GLog_initLevel(u16 level) {
 //    VDP_fillTileMapRect(PLAN_B, RES_TILE_GREY, 0, 0, 32, 28);
 
     if (map_editor_map_ready) {
-        setMap(PLAN_B, editor_map, 1);
+        setMap(PLAN_B, editor_map, TRUE);
         map_editor_map_ready = FALSE;
     } else {
-//        setMap(PLAN_B, MAP_GAME_MAP * MAP_LEN + (maps_data + level % MAP_AVAILABLE * MAP_LEN), 1);
+//        setMap(PLAN_B, MAP_GAME_MAP * MAP_LEN + (maps_data + level % MAP_AVAILABLE * MAP_LEN), TRUE);
         setMapLevel(selected_stage);
     }
 

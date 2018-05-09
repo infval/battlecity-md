@@ -77,35 +77,19 @@ void mapRepaint() {
 }
 
 void setMap(VDPPlan plan, const u8 *map, u8 game_mode) {
-    setMapEx(plan, map, game_mode, 0);
+    setMapEx(plan, map, game_mode, FALSE);
 }
 
 void setFakeMap(const u8 *map, u8 game_mode) {
-    setMapEx(PLAN_B, map, game_mode, 1);
+    setMapEx(PLAN_B, map, game_mode, TRUE);
 }
 
 void setMapLevel(u8 lvl) {
-    setMap(PLAN_B, MAP_GAME_MAP * MAP_LEN + (config.maps_data + lvl % MAP_AVAILABLE * MAP_LEN), 1);
+    setMap(PLAN_B, MAP_GAME_MAP * MAP_LEN + (config.maps_data + lvl % MAP_AVAILABLE * MAP_LEN), TRUE);
 }
 
 void setFakeMapLevel(u8 lvl) {
-    setFakeMap(MAP_GAME_MAP * MAP_LEN + (config.maps_data + lvl % MAP_AVAILABLE * MAP_LEN), 1);
-}
-
-void setMenuMap() {
-    setMap(PLAN_B, maps_data, MAP_START_MENU);
-}
-void setEmptyEditorMap() {
-    setMap(PLAN_B, maps_data, MAP_EDITOR);
-}
-void setGameOverMap() {
-    setMap(PLAN_B, maps_data, MAP_GAMEOVER);
-}
-void setScore1Map() {
-    setMap(PLAN_B, maps_data, MAP_SCORE1);
-}
-void setScore2Map() {
-    setMap(PLAN_B, maps_data, MAP_SCORE2);
+    setFakeMap(MAP_GAME_MAP * MAP_LEN + (config.maps_data + lvl % MAP_AVAILABLE * MAP_LEN), TRUE);
 }
 
 void setMapsData(const u8 *map) {
@@ -126,8 +110,8 @@ void openScreenEffect() {
 void closeScreenEffect() {
     u8 i;
     for (i = 0; i < 15; i++) {
-        VDP_fillTileMapRect (PLAN_A, RES_TILE_GREY, 0, i, 32, 1);
-        VDP_fillTileMapRect (PLAN_A, RES_TILE_GREY, 0, 28 - i, 32, 1);
+        VDP_fillTileMapRect(PLAN_A, RES_TILE_GREY, 0, i, 32, 1);
+        VDP_fillTileMapRect(PLAN_A, RES_TILE_GREY, 0, 28 - i, 32, 1);
         VDP_waitVSync();
     }
 
