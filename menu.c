@@ -28,8 +28,6 @@ void startMenu(s8 do_scroll) {
         scroll = -224;
     }
 
-    u32 now_top = game_player[0].scor > game_player[1].scor ? game_player[0].scor : game_player[1].scor;
-
     VDP_setPalette(0, palette_black);
     VDP_resetSprites();
 
@@ -38,7 +36,8 @@ void startMenu(s8 do_scroll) {
     setMap(PLAN_B, maps_data, 0);
 
     drawNum(top_scor, 136 / 8, 1);
-    drawNum(now_top, 56 / 8, 1);
+    drawNum(game_player[0].scor, 56 / 8, 1);
+    drawNum(game_player[1].scor, 208 / 8, 1); // Warning: drawNum() -> mapSetTile() -> current_map[x + y * MAP_H] = val;
     VDP_setVerticalScroll(PLAN_B, scroll);
     sleepFrames(1);
     VDP_setPalette(0, pal_menu);
@@ -82,17 +81,16 @@ void modeMenu() {
 
     selector = 0;
 
-    u32 now_top = game_player[0].scor > game_player[1].scor ? game_player[0].scor : game_player[1].scor;
-
     VDP_setPalette(0, palette_black);
     VDP_resetSprites();
 
-    VDP_fillTileMapRect (PLAN_B, 0, 0, 0, planWidth, planHeight);
+    VDP_fillTileMapRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
 
     setMap(PLAN_B, menu_data, 0);
 
     drawNum(top_scor, 136 / 8, 1);
-    drawNum(now_top, 56 / 8, 1);
+    drawNum(game_player[0].scor, 56 / 8, 1);
+    drawNum(game_player[1].scor, 208 / 8, 1); // Warning: drawNum() -> mapSetTile() -> current_map[x + y * MAP_H] = val;
     VDP_setVerticalScroll(PLAN_B, scroll);
     sleepFrames(1);
     VDP_setPalette(0, pal_menu);
