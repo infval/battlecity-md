@@ -9,7 +9,7 @@
 //#include "audio.h"
 
 s16 tileAfterHit(u16 tile_idx, u16 bullet_rotate, u16 dip);
-void tileReaction(_bullet* bull, s16* after_hit, u8* kill_bull, s16* x0, s16* y0, u8 xShift, u8 yShift);
+void tileReaction(_bullet *bull, s16 *after_hit, u8 *kill_bull, s16 *x0, s16 *y0, u8 xShift, u8 yShift);
 
 u8 moveAvailableInUnits(_tank *tank) {
 
@@ -97,7 +97,7 @@ void detectBulletToWallCollision(_bullet *bull) {
     if (kill_bull) {
         GLog_killBullet(bull, TRUE);
         if (bull->maker == &game_player[0] || bull->maker == &game_player[1]) {
-            if (after_hit1 == RES_TILE_ARMOR || after_hit2 == RES_TILE_ARMOR) {
+            if (after_hit1 == RES_TILE_STEEL || after_hit2 == RES_TILE_STEEL) {
 //                startPlaySample(snd_bull_stop, sizeof(snd_bull_stop), 11000, AUDIO_PAN_CENTER, 6);
                 soundPlay(snd_bull_stop, sizeof(snd_bull_stop), SOUND_PCM_CH3, FALSE);
             }
@@ -115,10 +115,10 @@ s16 tileAfterHit(u16 tile_idx, u16 bullet_rotate, u16 dip) {
 
     u16 mask;
 
-    if (tile_idx == RES_TILE_ARMOR)
-        return tile_idx;
-    if (tile_idx == (RES_TILE_GRASS | TILE_ATTR(0, 1, 0, 0))) {
-        return RES_TILE_GRASS;
+    if (tile_idx == RES_TILE_STEEL)
+        return RES_TILE_STEEL;
+    if (tile_idx == (RES_TILE_WOODS | TILE_ATTR(0, 1, 0, 0))) {
+        return RES_TILE_WOODS;
     }
     else if (tile_idx > 16 || tile_idx == 0) {
         return -1;
@@ -136,15 +136,16 @@ s16 tileAfterHit(u16 tile_idx, u16 bullet_rotate, u16 dip) {
     return tile_idx & mask;
 }
 
-void tileReaction(_bullet* bull, s16* after_hit, u8* kill_bull, s16* x0, s16* y0, u8 xShift, u8 yShift) {
+void tileReaction(_bullet *bull, s16 *after_hit, u8 *kill_bull, s16 *x0, s16 *y0, u8 xShift, u8 yShift) {
     switch (*after_hit) {
-        case RES_TILE_GRASS:
-            if (bull->maker->uranium_bullets && bull->maker->grass_trim) {
+        case RES_TILE_WOODS:
+            if (bull->maker->uranium_bullets && bull->maker->woods_trim) {
                 *after_hit = 0;
                 mapSetTile(0, *x0 + xShift, *y0 + yShift);
+                soundPlay(snd_brick_hit, sizeof(snd_brick_hit), SOUND_PCM_CH4, FALSE);
             }
             break;
-        case RES_TILE_ARMOR:
+        case RES_TILE_STEEL:
             if (mods.bul_ricochet) {
                 if (!bull->ricocheted) {
                     bull->ricocheted = TRUE;
@@ -163,7 +164,11 @@ void tileReaction(_bullet* bull, s16* after_hit, u8* kill_bull, s16* x0, s16* y0
             }
             mapSetTile(*after_hit, *x0 + xShift, *y0 + yShift);
             break;
+        // Brick
         default:
+            if (bull->maker->uranium_bullets) {
+                *after_hit = 0;
+            }
             mapSetTile(*after_hit, *x0 + xShift, *y0 + yShift);
             *kill_bull = 1;
             break;
@@ -182,55 +187,60 @@ u8 moveAvailableInWalls(_tank *tank) {
     if (x1 < 0 || x2 >= MAP_W || y1 < 0 || y2 >= MAP_H)
         return FALSE;
 
-    u16 tile_idx = 0;
-
-    tile_idx = mapGetTile(x1, y1);
-
-    if (tile_idx == RES_TILE_DIRT && tank->speed == 0) {
-        tank->on_dirt = TRUE;
-    }
-    else {
-        tank->on_dirt = FALSE;
-    }
-
-    if (tile_idx == RES_TILE_DIRT && tank->speed) {
-        tank->dirt = 32;
-    }
-    else if (tile_idx != RES_TILE_DIRT) {
-        tank->dirt = 0;
-    }
-
     u16 i1 = FALSE;
     u16 i2 = FALSE;
     u16 i3 = FALSE;
     u16 i4 = FALSE;
+
+    u16 tile_idx = 0;
+
+    tile_idx = mapGetTile(x1, y1);
     tile_idx &= 0x1FF;
     if (tile_idx == 0
-    // || tile_idx == 35
-     || tile_idx == RES_TILE_GRASS
-     || tile_idx == RES_TILE_DIRT
-     || (tank->ship == 1 && tile_idx == RES_TILE_WATER)) i1 = TRUE;
+     || tile_idx == RES_TILE_WOODS
+     || tile_idx == RES_TILE_ICE
+     || (tank->ship == 1 && tile_idx == RES_TILE_RIVER)) i1 = TRUE;
     tile_idx = mapGetTile(x2, y1);
     tile_idx &= 0x1FF;
     if (tile_idx == 0
-    // || tile_idx == 35
-     || tile_idx == RES_TILE_GRASS
-     || tile_idx == RES_TILE_DIRT
-     || (tank->ship == 1 && tile_idx == RES_TILE_WATER)) i2 = TRUE;
+     || tile_idx == RES_TILE_WOODS
+     || tile_idx == RES_TILE_ICE
+     || (tank->ship == 1 && tile_idx == RES_TILE_RIVER)) i2 = TRUE;
     tile_idx = mapGetTile(x1, y2);
     tile_idx &= 0x1FF;
     if (tile_idx == 0
-    // || tile_idx == 35
-     || tile_idx == RES_TILE_GRASS
-     || tile_idx == RES_TILE_DIRT
-     || (tank->ship == 1 && tile_idx == RES_TILE_WATER)) i3 = TRUE;
+     || tile_idx == RES_TILE_WOODS
+     || tile_idx == RES_TILE_ICE
+     || (tank->ship == 1 && tile_idx == RES_TILE_RIVER)) i3 = TRUE;
     tile_idx = mapGetTile(x2, y2);
     tile_idx &= 0x1FF;
     if (tile_idx == 0
-    // || tile_idx == 35
-     || tile_idx == RES_TILE_GRASS
-     || tile_idx == RES_TILE_DIRT
-     || (tank->ship == 1 && tile_idx == RES_TILE_WATER)) i4 = TRUE;
+     || tile_idx == RES_TILE_WOODS
+     || tile_idx == RES_TILE_ICE
+     || (tank->ship == 1 && tile_idx == RES_TILE_RIVER)) i4 = TRUE;
+
+    u16 ice = FALSE;
+    if (
+        (r == 0 && (mapGetTile(x1, y1+1) == RES_TILE_ICE || mapGetTile(x2, y1+1) == RES_TILE_ICE))
+     || (r == 1 && (mapGetTile(x1+1, y2) == RES_TILE_ICE || mapGetTile(x1+1, y1) == RES_TILE_ICE))
+     || (r == 2 && (mapGetTile(x2, y2-1) == RES_TILE_ICE || mapGetTile(x1, y2-1) == RES_TILE_ICE))
+     || (r == 3 && (mapGetTile(x2-1, y2) == RES_TILE_ICE || mapGetTile(x2-1, y1) == RES_TILE_ICE))
+       ) {
+        ice = TRUE;
+    }
+
+    tank->on_ice = FALSE;
+    if (ice && tank->speed == 0) {
+        tank->on_ice = TRUE;
+    }
+
+    if (ice && tank->speed) {
+        tank->ice = 32; // 28 ?
+    }
+    else if (!ice) {
+        tank->ice = 0;
+    }
+
     if (i1 && i2 && i3 && i4)
         return TRUE;
 
@@ -362,7 +372,7 @@ void detectBulletToBulletCollision(_bullet *bull) {
 
     while (i--) {
         buff = &bullets[i];
-        if (!buff->speed || bull == buff)
+        if (!buff->speed || bull->maker == buff->maker) // (bull == buff) is included 
             continue;
         delta_x = bull->posx - buff->posx;
         delta_y = bull->posy - buff->posy;

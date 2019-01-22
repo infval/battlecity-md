@@ -7,7 +7,6 @@
 
 u16 current_map[MAP_LEN];
 VDPPlan map_plan;
-//u16 map_plan;
 
 void setMapEx(VDPPlan plan, const u8 *map, u8 game_mode, u8 fake) {
 
@@ -17,7 +16,7 @@ void setMapEx(VDPPlan plan, const u8 *map, u8 game_mode, u8 fake) {
     for (i = 0; i < MAP_LEN; i++) {
         current_map[i] = map[i];
         if (!fake) {
-            if (game_mode && current_map[i] == RES_TILE_GRASS) {
+            if (game_mode && current_map[i] == RES_TILE_WOODS) {
                 current_map[i] |= TILE_ATTR(0, 1, 0, 0);
             }
         }
@@ -99,9 +98,8 @@ void setMapsData(const u8 *map) {
 
 void openScreenEffect() {
     u8 i;
-    VDP_fillTileMapRect(PLAN_A, RES_TILE_GREY, 0, 0, planWidth, planHeight);
     for (i = 14; i > 0; i--) {
-        VDP_fillTileMapRect(PLAN_A, 0, 0, i, 32, 1);
+        VDP_fillTileMapRect(PLAN_A, 0, 0,  i - 1, 32, 1);
         VDP_fillTileMapRect(PLAN_A, 0, 0, 28 - i, 32, 1);
         VDP_waitVSync();
     }
@@ -110,13 +108,12 @@ void openScreenEffect() {
 void closeScreenEffect() {
     u8 i;
     for (i = 0; i < 15; i++) {
-        VDP_fillTileMapRect(PLAN_A, RES_TILE_GREY, 0, i, 32, 1);
+        VDP_fillTileMapRect(PLAN_A, RES_TILE_GREY, 0,  i - 1, 32, 1);
         VDP_fillTileMapRect(PLAN_A, RES_TILE_GREY, 0, 28 - i, 32, 1);
         VDP_waitVSync();
     }
 
     VDP_fillTileMapRect(PLAN_B, RES_TILE_GREY, 0, 0, 32, 28);
     VDP_fillTileMapRect(PLAN_A, 0, 0, 0, planWidth, planHeight);
-
     VDP_waitVSync();
 }

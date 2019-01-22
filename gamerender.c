@@ -6,7 +6,7 @@
 #include "resmap.h"
 #include "map.h"
 
-static u16 water_strobe = 0;
+static u16 river_strobe = 0;
 static const s16 bullet_sprite_offset_x[4] = { 3+0, -4, 3+0, -3 };
 static const s16 bullet_sprite_offset_y[4] = {  -8,  0,  -7,  0 };
 
@@ -14,7 +14,7 @@ void GRend_prepareRepaint() {
 
     u16 i, x, y;
 
-    if (pause && (water_strobe & 16)) {
+    if (pause && (river_strobe & 16)) {
         x = (MAP_W >> 1 << 3) - 20;
         y = (MAP_H >> 1 << 3) + 1;
         drawSprite4x1(SPRITE_PAUSE | TILE_ATTR(0, 1, 0, 0), x, y);             // PAUS
@@ -55,7 +55,8 @@ void GRend_prepareRepaint() {
         }
         if (explodes[i].type == EXPLODE_BIG   && explodes[i].ani_counter > 4) explodes[i].type = 0;
         if (explodes[i].type == EXPLODE_SMALL && explodes[i].ani_counter > 2) explodes[i].type = 0;
-        explodes[i].strobe++;
+        if (!pause)
+            explodes[i].strobe++;
     }
 
     for (i = 0; i < config.units_on_map; i++) {
@@ -70,13 +71,15 @@ void GRend_prepareRepaint() {
 void GRend_repaint() {
 
     updateSprite();
-    water_strobe++;
-    if ((water_strobe & 63) == 0) {
-        VDP_setPaletteColor(/*0,*/ RES_COLOR_WATER2_ADDR, pal_red[RES_COLOR_WATER1_ADDR]);
-        VDP_setPaletteColor(/*0,*/ RES_COLOR_WATER3_ADDR, pal_red[RES_COLOR_WATER2_ADDR]);
-    }
-    if ((water_strobe & 63) == 31) {
-        VDP_setPaletteColor(/*0,*/ RES_COLOR_WATER3_ADDR, pal_red[RES_COLOR_WATER1_ADDR]);
-        VDP_setPaletteColor(/*0,*/ RES_COLOR_WATER2_ADDR, pal_red[RES_COLOR_WATER2_ADDR]);
+    river_strobe++;
+    if (!pause) {
+        if ((river_strobe & 63) == 0) {
+            VDP_setPaletteColor(RES_COLOR_RIVER2_ADDR, pal_red[RES_COLOR_RIVER1_ADDR]);
+            VDP_setPaletteColor(RES_COLOR_RIVER3_ADDR, pal_red[RES_COLOR_RIVER2_ADDR]);
+        }
+        else if ((river_strobe & 63) == 32) {
+            VDP_setPaletteColor(RES_COLOR_RIVER3_ADDR, pal_red[RES_COLOR_RIVER1_ADDR]);
+            VDP_setPaletteColor(RES_COLOR_RIVER2_ADDR, pal_red[RES_COLOR_RIVER2_ADDR]);
+        }
     }
 }

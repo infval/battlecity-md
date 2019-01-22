@@ -223,20 +223,15 @@ void setOrangeColor() {
 void drawTankIcons() {
 
     _tank t;
-    t.god = 0;
-    t.birth = 0;
-    t.hitpoint = 1;
+    memset(&t, 0, sizeof(_tank));
     t.type = 4;
     if (mods.en_pl_skin)
         t.type = 0;
     t.posx = 97;
     t.posy = 77;
     t.color = TANK_COLOR_GREY;
-    t.speed = 0;
-    t.bonus = 0;
-    t.freeze = 0;
-    t.rotate = 0;
-    t.ship = 0;
+    t.hitpoint = 1;
+
     u16 i;
     updateSprite();
     for (i = 0; i < 4; i++) {

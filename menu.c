@@ -43,18 +43,13 @@ void startMenu(s8 do_scroll) {
     VDP_setPalette(0, pal_menu);
     VDP_setPalette(1, pal_yellow);
     _tank tank;
-    tank.color = TANK_COLOR_RED;
+    memset(&tank, 0, sizeof(_tank));
     tank.posx = SPRITE_POS_SELECTOR_X;
     tank.posy = SPRITE_POS_SELECTOR_Y;
-    tank.rotate = 3;
-    tank.type = 0;
     tank.color = TANK_COLOR_YELLOW;
-    tank.hitpoint = 1;
-    tank.god = 0;
-    tank.birth = 0;
     tank.speed = 1;
-    tank.freeze = 0;
-    tank.bonus = 0;
+    tank.rotate = 3;
+    tank.hitpoint = 1;
 
     JOY_setEventHandler(startMenu_JoyEvent);
 
@@ -96,18 +91,13 @@ void modeMenu() {
     VDP_setPalette(0, pal_menu);
     VDP_setPalette(1, pal_yellow);
     _tank tank;
-    tank.color = TANK_COLOR_RED;
+    memset(&tank, 0, sizeof(_tank));
     tank.posx = SPRITE_POS_SELECTOR_X;
     tank.posy = SPRITE_POS_SELECTOR_Y;
-    tank.rotate = 3;
-    tank.type = 0;
     tank.color = TANK_COLOR_YELLOW;
-    tank.hitpoint = 1;
-    tank.god = 0;
-    tank.birth = 0;
     tank.speed = 1;
-    tank.freeze = 0;
-    tank.bonus = 0;
+    tank.rotate = 3;
+    tank.hitpoint = 1;
 
     JOY_setEventHandler(modeMenu_JoyEvent);
 
@@ -140,7 +130,7 @@ void startMenu_JoyEvent(u16 joy, u16 changed, u16 state) {
             selected_item = selector;
             if (selector == 3) {
                 config.cheats_on = ON;
-                soundPlay(snd_score_bonus, sizeof(snd_score_bonus), SOUND_PCM_CH1, FALSE);
+                SND_startPlay_4PCM(snd_score_bonus, sizeof(snd_score_bonus), SOUND_PCM_CH1, FALSE);
             }
         }
 

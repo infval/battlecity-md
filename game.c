@@ -112,6 +112,7 @@ void selectLevel() {
     u8 init_logic = FALSE;
 
     start_snd_engine_once = FALSE;
+    stop_sound_engine = FALSE;
 
     updateSprite();
 
@@ -206,6 +207,8 @@ void startLevel() {
 
 //    VDP_fillTileMapRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
     VDP_fillTileMapRect(PLAN_A, RES_TILE_GREY, 0, 0, 32, 28);
+    VDP_waitVSync();
+
     VDP_resetSprites();
     VDP_updateSprites(1, TRUE);
 
@@ -215,6 +218,7 @@ void startLevel() {
     } else {
         setFakeMapLevel(selected_stage);
     }
+    VDP_waitVSync();
 
     // Screen opening
     openScreenEffect();
@@ -233,6 +237,8 @@ void startLevel() {
     JOY_setEventHandler(joyEventGame);
 
     while (!GLog_victory()) {
+        if (config.show_fps)
+            VDP_showFPS(TRUE);
         GLog_updateGame();
 
         if (GLog_gameover()) {
@@ -259,27 +265,32 @@ void startLevel() {
 
 void joyEventGame(u16 joy, u16 changed, u16 state) {
 
+    const u16 pressed = state & changed;
+
     if (GLog_gameover())
         return;
-    if ((state & BUTTON_START) && (changed & BUTTON_START) && !gameover && level_timer > 180) {
+
+    const u16 player_index = (joy == JOY_1) ? 0 : 1;
+
+    if ((pressed & BUTTON_START) /*&& !gameover*/ && level_timer > 180) {
         pause = !pause;
         if (pause) {
             soundStopEngine();
             soundPlay(snd_pause, sizeof(snd_pause), SOUND_PCM_CH1, FALSE);
         }
-        if (!pause) {
+        else {
             soundPlayEngine();
             if (config.cheats_on) {
-                if (joy == JOY_1 && (state & BUTTON_C)) {
+                if (state & BUTTON_A) {
+                    bonus.type = BONUS_GRENADE;
+                    setBonus(player_index);
+                }
+                if (state & BUTTON_B) {
+                    bonus.type = BONUS_GUN;
+                    setBonus(player_index);
+                }
+                if (state & BUTTON_C) {
                     GLog_setVictory();
-                }
-                if (joy == JOY_1 && (state & BUTTON_A)) {
-                    bonus.type = 5;
-                    setBonus(0);
-                }
-                if (joy == JOY_1 && (state & BUTTON_B)) {
-                    bonus.type = 7;
-                    setBonus(0);
                 }
             }
         }
@@ -288,52 +299,27 @@ void joyEventGame(u16 joy, u16 changed, u16 state) {
     if (pause)
         return;
 
-    if (config.turbo_b) {
-        if (joy == JOY_1 && (changed & (BUTTON_A | BUTTON_C)) && (state & (BUTTON_A | BUTTON_C)) && game_player[0].fire_timer == 0) {
-            game_player[0].fire = 1;
-            game_player[0].fire_timer = 1;
-        }
-        if (joy == JOY_2 && (changed & (BUTTON_A | BUTTON_C)) && (state & (BUTTON_A | BUTTON_C)) && game_player[1].fire_timer == 0) {
-            game_player[1].fire = 1;
-            game_player[1].fire_timer = 1;
-        }
+    u16 fire_buttons = BUTTON_A | BUTTON_C;
+    if (!config.turbo_b) {
+        fire_buttons |= BUTTON_B;
     }
-    else {
-        if (joy == JOY_1 && (state & (BUTTON_A | BUTTON_B | BUTTON_C)) && game_player[0].fire_timer == 0) {
-            game_player[0].fire = 1;
-            game_player[0].fire_timer = 1;
-        }
-        if (joy == JOY_2 && (state & (BUTTON_A | BUTTON_B | BUTTON_C)) && game_player[1].fire_timer == 0) {
-            game_player[1].fire = 1;
-            game_player[1].fire_timer = 1;
-        }
+    if (pressed & fire_buttons) {
+        game_player[player_index].fire = 1;
+    }
 
-        if (joy == JOY_1 && !(state & (BUTTON_A | BUTTON_B | BUTTON_C))) {
-            game_player[0].fire_timer = 0;
-        }
-        if (joy == JOY_2 && !(state & (BUTTON_A | BUTTON_B | BUTTON_C))) {
-            game_player[1].fire_timer = 0;
+    // Take life
+    if (menuGetSelectedItem() == ITEM_TWO_PLAYER && (state & BUTTON_A) && (state & BUTTON_B)) {
+        if (game_player[player_index    ].lives == 0
+         && game_player[player_index ^ 1].lives > 1
+        ) {
+            game_player[player_index    ].lives++;
+            game_player[player_index ^ 1].lives--;
         }
     }
 
-    if (joy == JOY_1) {
-        moveAvailableInWalls(&game_player[0]);
-        switch (state & changed) {
-            case BUTTON_UP: case BUTTON_DOWN: case BUTTON_LEFT: case BUTTON_RIGHT:
-                if (game_player[0].on_dirt && !game_player[0].dirt) {
-                    soundPlay(snd_chuh, sizeof(snd_chuh), SOUND_PCM_CH3, FALSE);
-                }
-                break;
-        }
-    }
-    if (joy == JOY_2) {
-        moveAvailableInWalls(&game_player[1]);
-        switch (state & changed) {
-            case BUTTON_UP: case BUTTON_DOWN: case BUTTON_LEFT: case BUTTON_RIGHT:
-                if (game_player[1].on_dirt && !game_player[1].dirt) {
-                    soundPlay(snd_chuh, sizeof(snd_chuh), SOUND_PCM_CH3, FALSE);
-                }
-                break;
+    if  (pressed & (BUTTON_UP | BUTTON_DOWN | BUTTON_LEFT | BUTTON_RIGHT)) {
+        if (game_player[player_index].on_ice && !game_player[player_index].ice) {
+            soundPlay(snd_chuh, sizeof(snd_chuh), SOUND_PCM_CH3, FALSE);
         }
     }
 }
@@ -345,7 +331,7 @@ void drawGameover() {
     s16 word_y = MAP_H * 8 - game_over_timer;
 
     if (word_y < MAP_H / 2 * 8 - 14) word_y = MAP_H / 2 * 8 - 14;
-    drawSprite4x1(SPRITE_GAMEOVER | TILE_ATTR(0, 1, 0, 0), word_x, word_y);
+    drawSprite4x1( SPRITE_GAMEOVER      | TILE_ATTR(0, 1, 0, 0), word_x, word_y);
     drawSprite4x1((SPRITE_GAMEOVER + 4) | TILE_ATTR(0, 1, 0, 0), word_x, word_y + 8);
 }
 
@@ -356,7 +342,8 @@ void updateAudio() {
     if (GLog_gameover() || pause) {
         return;
     }
-    if (game_player[0].hitpoint || game_player[1].hitpoint) speed = 1;
+    extern u16 victory_timer;
+    if ((game_player[0].hitpoint || game_player[1].hitpoint) && victory_timer == 0) speed = 1;
 
     if (game_player[0].hitpoint && game_player[0].speed != 0) speed = 2;
     if (game_player[1].hitpoint && game_player[1].speed != 0) speed = 2;
@@ -374,6 +361,7 @@ void updateAudio() {
 
     if (!stop_sound_engine) {
         if (playing_engine != speed) {
+            if (speed == 0) SND_stopPlay_4PCM(SOUND_PCM_CH1);
             if (speed == 1) soundPlay(snd_engine_stop, sizeof(snd_engine_stop), SOUND_PCM_CH1, TRUE);
             if (speed == 2) soundPlay(snd_engine_move, sizeof(snd_engine_move), SOUND_PCM_CH1, TRUE);
             playing_engine = speed;
@@ -381,7 +369,7 @@ void updateAudio() {
         }
     }
 
-    if (GLog_victory() || GLog_gameover()) {
+    if (GLog_victory()) {// || GLog_gameover()) {
         SND_stopPlay_4PCM(SOUND_PCM_CH1);
     }
 }

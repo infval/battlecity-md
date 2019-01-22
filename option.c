@@ -53,17 +53,13 @@ void startOption() {
     VDP_setPalette(1, pal_yellow);
 
     _tank tank;
-    tank.color = TANK_COLOR_RED;
+    memset(&tank, 0, sizeof(_tank));
     tank.posx = 4;
     tank.posy = 40 + (selector << 4);
-    tank.rotate = 3;
-    tank.type = 0;
-    tank.hitpoint = 1;
-    tank.god = 0;
-    tank.birth = 0;
+    tank.color = TANK_COLOR_RED;
     tank.speed = 1;
-    tank.freeze = 0;
-    tank.bonus = 0;
+    tank.rotate = 3;
+    tank.hitpoint = 1;
 
     JOY_setEventHandler(joyEventOption);
 
@@ -92,16 +88,16 @@ void joyEventOption(u16 joy, u16 changed, u16 state) {
     switch (state & changed) {
         case BUTTON_UP:
             selector--;
-            if (selector == 2)
-                selector = 1;
+            if (selector == 3)
+                selector = 2;
             if (selector < 0)
-                selector = 3;
+                selector = 4;
             break;
         case BUTTON_DOWN:
             selector++;
-            if (selector == 2)
-                selector = 3;
-            if (selector > 3)
+            if (selector == 3)
+                selector = 4;
+            if (selector > 4)
                 selector = 0;
             break;
         case BUTTON_START:
@@ -137,24 +133,19 @@ void optionUpdateState(s8 item_to_update) {
 //            config.difficulty = shiftState(config.difficulty, 4);
 //            clearText(10, 6);
 //            if (config.difficulty == 0) {
-//                u8 seq[] = {69,65,83,89};
-//                drawText(seq, 4, 6);
+//                drawState("EASY", 6);
 //            }
 //            else if (config.difficulty == 1) {
-//                u8 seq[] = {78,79,82,77,65,76};
-//                drawText(seq, 6, 6);
+//                drawState("NORMAL", 6);
 //            }
 //            else if (config.difficulty == 2) {
-//                u8 seq[] = {72,65,82,68};
-//                drawText(seq, 4, 6);
+//                drawState("HARD", 6);
 //            }
 //            else if (config.difficulty == 3) {
-//                u8 seq[] = {86,69,82,89,0,72,65,82,68};
-//                drawText(seq, 9, 6);
+//                drawState("VERY HARD", 6);
 //            }
 //            else if (config.difficulty == 4) {
-//                u8 seq[] = {77,65,68,78,69,83,83};
-//                drawText(seq, 7, 6);
+//                drawState("MADNESS", 6);
 //            }
 //            if (!all) break;
         case 0:
@@ -176,6 +167,17 @@ void optionUpdateState(s8 item_to_update) {
             }
             else {
                 drawState("OFF", 10);
+            }
+
+            if (!all) break;
+        case 2:
+            config.show_fps = shiftState(config.show_fps, 1);
+            clearText(4, 12);
+            if (config.show_fps) {
+                drawState("ON", 12);
+            }
+            else {
+                drawState("OFF", 12);
             }
 
             if (!all) break;
@@ -206,8 +208,9 @@ u8 shiftStateEx(u8 val, u8 min_state, u8 max_state) {
 
 void clearText(u8 width, u8 y) {
     u8 i;
-    for (i = 26 - width; i < 26; i++)
-        mapSetTile(0, i, y);
+    for (i = 26 - width; i < 26; i++) {
+        mapSetTile(' ', i, y);
+    }
 }
 
 void drawText(u8 *seq, u8 count, u8 y) {
@@ -246,17 +249,13 @@ void customGameOption() {
     VDP_setPalette(1, pal_yellow);
 
     _tank tank;
-    tank.color = TANK_COLOR_RED;
+    memset(&tank, 0, sizeof(_tank));
     tank.posx = 4;
     tank.posy = 40 + (selector << 4);
-    tank.rotate = 3;
-    tank.type = 0;
-    tank.hitpoint = 1;
-    tank.god = 0;
-    tank.birth = 0;
+    tank.color = TANK_COLOR_RED;
     tank.speed = 1;
-    tank.freeze = 0;
-    tank.bonus = 0;
+    tank.rotate = 3;
+    tank.hitpoint = 1;
 
     JOY_setEventHandler(joyEventCustomGameOption);
 

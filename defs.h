@@ -27,17 +27,17 @@
 #define GUN_BONUS                   2
 #define BOTH_BONUS                  3
 
-#define BONUS_GOD                   1
-#define BONUS_TIME                  2
-#define BONUS_ARM_STAFF             3
+#define BONUS_HELMET                1
+#define BONUS_CLOCK                 2
+#define BONUS_SCOOP                 3
 #define BONUS_STAR                  4
-#define BONUS_BOMB                  5
-#define BONUS_LIFE                  6
+#define BONUS_GRENADE               5
+#define BONUS_TANK                  6
 #define BONUS_GUN                   7
 #define BONUS_SHIP                  8
 
 #define GAME_VERSION                "1.08"
-#define GAME_BUILD                  "13"
+#define GAME_BUILD                  "16"
 
 
 // ================== GAME CONFIG ===================
@@ -97,6 +97,8 @@ typedef struct {
     u8 units_on_map;
     u8 max_explode;
     u8 max_bullets;
+
+    u8 show_fps;
 
 } _config;
 

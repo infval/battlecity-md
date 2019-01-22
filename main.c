@@ -145,7 +145,7 @@ void showMessage() {
     VDP_drawTextBG(PLAN_B, GAME_VERSION, (40 - sizeof("battlecity-md vX.XX-X"))/2 + sizeof("battlecity-md "), 0);
     VDP_drawTextBG(PLAN_B, GAME_BUILD, (40 - sizeof("battlecity-md vX.XX-X"))/2 + sizeof("battlecity-md vX.XX"), 0);
     VDP_drawTextBG(PLAN_B, "game by KRIKzz 2009", (40 - sizeof("game by KRIKzz 2009")) / 2, 2);
-    VDP_drawTextBG(PLAN_B, "mod by werton 2018", (40 - sizeof("mod by werton 2018")) / 2, 4);
+    VDP_drawTextBG(PLAN_B, "mod by werton 2019", (40 - sizeof("mod by werton 2019")) / 2, 4);
 
     VDP_drawTextBG(PLAN_B, "thanks to:", (40 - sizeof("thanks to:")) / 2, 7);
     VDP_drawTextBG(PLAN_B, "Stephane Dallongeville", (40 - sizeof("Stephane Dallongeville")) / 2, 9);
@@ -197,6 +197,8 @@ void config_init() {
     config.units_on_map = config.max_enemies_on_map + 2;
     config.max_explode = config.units_on_map << 1;
     config.max_bullets = config.units_on_map << 1;
+
+    config.show_fps = FALSE;
 
     if (config.levels_pack == LEVELPACK_BC) {
         setMapsData(maps_data);

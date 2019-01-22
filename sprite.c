@@ -101,7 +101,7 @@ void drawTank(_tank *sprite) {
     if (sprite->freeze && (ani_counter & 31) < 16)
         return;
 
-//        drawSpritePixel(RES_TILE_DIRT | TILE_PAL(color), sprite->posx, sprite->posy);
+//        drawSpritePixel(RES_TILE_ICE | TILE_PAL(color), sprite->posx, sprite->posy);
 
     if (sprite->birth) {
         drawSprite2x2(SPRITE_ADDR_BIRTH + ((sprite->birth >> 2 & 3) << 2), sprite->posx, sprite->posy);

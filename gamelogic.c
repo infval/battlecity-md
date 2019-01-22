@@ -19,7 +19,7 @@
 
 #define BULLET_SPEED_1 1
 #define BULLET_SPEED_2 2
-#define BULLET_DELAY 12
+#define BULLET_DESTROY_DELAY 8
 
 #define MAX_BONUS 8
 #define ARMOR_STAFF_TIME 1024
@@ -31,7 +31,7 @@
 #define VDP_setTile(plan, tile, x, y) (VDP_setTileMapXY(plan, tile, x, y))
 
 void GLog_updateMove();
-void GLog_updatebullets();
+void GLog_updateBullets();
 void GLog_updateControl(u8 gamer_idx, u16 joy, u16 speed);
 void GLog_updateAI();
 void GLog_initEnemy();
@@ -97,13 +97,13 @@ void GLog_updateMove() {
         if (game_player[i].god) {
             game_player[i].god--;
         }
-        if (game_player[i].dirt) {
-            game_player[i].dirt--;
+        if (game_player[i].ice) {
+            game_player[i].ice--;
         }
 
         speed = speed_counter & game_player[i].speed;
-        if (!game_player[i].speed && game_player[i].dirt && i < 2) {
-            speed = speed_counter & 1;
+        if (!game_player[i].speed && game_player[i].ice && i < 2) {
+            speed = speed_counter & TANK_SPEED_2; // TODO: if mods.pl_speed_dec
         }
         if (speed) {
             delta_1 = moveAvailableInUnits(&game_player[i]);
@@ -124,13 +124,24 @@ void GLog_updateMove() {
     }
 }
 
-void GLog_updatebullets() {
+void GLog_updateBullets() {
 
     u16 i;
     _bullet *bull_buff;
 
     for (i = 0; i < config.max_bullets; i++) {
         bull_buff = &bullets[i];
+
+        if (bull_buff->destroy_timer > 0) {
+            bull_buff->destroy_timer--;
+            if (bull_buff->destroy_timer == 0) {
+                bull_buff->maker->bullets_count--;
+                if (bull_buff->maker->bullets_count < 0) {
+                    bull_buff->maker->bullets_count = 0;
+                }
+            }
+            continue;
+        }
 
         if (bull_buff->speed == 0) continue;
         bull_buff->posx += speed_x[bull_buff->rotate] << 1;
@@ -188,9 +199,9 @@ void GLog_updateAI() {
     if (birth_timer)
         birth_timer--;
 
-    for (i = 2; i < config.units_on_map; i++) {
-        if (game_player[i].hitpoint) enemies_on_map++;
-    }
+//    for (i = 2; i < config.units_on_map; i++) {
+//        if (game_player[i].hitpoint) enemies_on_map++;
+//    }
 
 //    if (freeze) {
 //        freeze--;
@@ -251,16 +262,16 @@ void GLog_updateAI() {
             game_player[i].fire_timer--;
         } else {
             game_player[i].fire = 1;
-            game_player[i].fire_timer = 64 + (random() & 63);
+            game_player[i].fire_timer = (64 - BULLET_DESTROY_DELAY) + (random() & 63);
         }
     }
 }
 
 void GLog_updateBonus() {
     if (mods.en_invul) {
-        if (getTimer(1, 0) > 2000000) {
-//        if (getTimer(1, 0) > 900000) {
-            generateBonus(BONUS_BOMB);
+        if (getTimer(1, FALSE) > 2000000) {
+//        if (getTimer(1, FALSE) > 900000) {
+            generateBonus(BONUS_GRENADE);
 //            generateBonus(2);
             startTimer(1);
         }
@@ -305,9 +316,8 @@ void GLog_killBullet(_bullet *bull, u8 explode) {
     bull->speed = 0;
     if (explode)
         GLog_makeExplode(EXPLODE_SMALL, x, y);
-    bull->maker->bullets_count--;
-    if (bull->maker->bullets_count < 0)
-        bull->maker->bullets_count = 0;
+
+    bull->destroy_timer = BULLET_DESTROY_DELAY;
 
     last_killed_bullet = bull;
 }
@@ -349,10 +359,10 @@ void GLog_killPlayer(_tank *victim, _tank *killer) {
                 s16 x2 = (victim->posx + 15) >> 3;
                 s16 y2 = (victim->posy + 15) >> 3;
                 // If you can't swim, then die
-                if (mapGetTile(x1, y1) == RES_TILE_WATER
-                 || mapGetTile(x2, y1) == RES_TILE_WATER
-                 || mapGetTile(x1, y2) == RES_TILE_WATER
-                 || mapGetTile(x2, y2) == RES_TILE_WATER) {
+                if (mapGetTile(x1, y1) == RES_TILE_RIVER
+                 || mapGetTile(x2, y1) == RES_TILE_RIVER
+                 || mapGetTile(x1, y2) == RES_TILE_RIVER
+                 || mapGetTile(x2, y2) == RES_TILE_RIVER) {
                     victim->hitpoint = 0;
                 }
             }
@@ -366,9 +376,9 @@ void GLog_killPlayer(_tank *victim, _tank *killer) {
                     victim->uranium_bullets = 0;
                     victim->hp = 0;
                 }
-                else if (victim->hp != 1) // && victim->ship != 1)
+                else {//if (victim->hp != 1) && victim->ship != 1)
                     victim->hitpoint--;
-
+                }
             }
             else { // if (killer == &game_player[0] || killer == &game_player[1]) {
                 if (mods.en_invul) {
@@ -429,19 +439,19 @@ void GLog_shot(_tank *tank) {
 
     for (i = 0; i < config.max_bullets; i++) {
         bull_buff = &bullets[i];
-        if (bull_buff->speed)
+        if (bull_buff->speed || bull_buff->destroy_timer)
             continue;
-        bull_buff->speed = tank->bullet_speed;
+        bull_buff->speed  = tank->bullet_speed;
         bull_buff->rotate = tank->rotate;
-        bull_buff->posx = tank->posx;
-        bull_buff->posy = tank->posy;
+        bull_buff->posx   = tank->posx;
+        bull_buff->posy   = tank->posy;
         if (bull_buff->rotate & 1) {
             bull_buff->posx += 8;
         } else {
             bull_buff->posy += 8;
         }
         bull_buff->ricocheted = FALSE;
-        if ((bull_buff->posx & 3) == 0 && (tank->rotate & 1)) bull_buff->posx += 1;
+        if ((bull_buff->posx & 3) == 0 &&  (tank->rotate & 1)) bull_buff->posx += 1;
         if ((bull_buff->posy & 3) == 0 && !(tank->rotate & 1)) bull_buff->posy += 1;
         bull_buff->maker = tank;
         tank->bullets_count++;
@@ -457,26 +467,15 @@ void GLog_updateControl(u8 gamer_idx, u16 joy, u16 speed) {
     if (game_player[gamer_idx].birth || !game_player[gamer_idx].hitpoint)
         return;
 
+    // Player only
     if (config.turbo_b) {
-        if (game_player[gamer_idx].bullet_delay < BULLET_DELAY) game_player[gamer_idx].bullet_delay += 1;
-
-        if ((joy & BUTTON_B) && game_player[gamer_idx].fire_timer == 0 ) {
+        if (joy & BUTTON_B) {
             game_player[gamer_idx].fire = 1;
-            game_player[gamer_idx].fire_timer = 1;
-        }
-    //    else if ((joy & BUTTON_B) && game_player[gamer_idx].fire_timer == 1 && game_player[gamer_idx].bullet_delay >= BULLET_DELAY) {
-    //        game_player[0].fire_timer = 0;
-    //        game_player[0].bullet_delay = 0;
-    //    }
-
-        if (game_player[gamer_idx].bullet_delay >= BULLET_DELAY) {
-            game_player[gamer_idx].fire_timer = 0;
-            game_player[gamer_idx].bullet_delay = 0;
         }
     }
 
     game_player[gamer_idx].speed = 0;
-    
+
     if (game_player[gamer_idx].freeze) {
         game_player[gamer_idx].freeze--;
         return;
@@ -525,7 +524,6 @@ void GLog_updateControl(u8 gamer_idx, u16 joy, u16 speed) {
         if (game_player[gamer_idx].posy >> 3 > MAP_H - 2)
             game_player[gamer_idx].posy = (MAP_H - 2) << 3;
     }
-
 }
 
 void GLog_updateGame() {
@@ -573,7 +571,7 @@ void GLog_updateGame() {
     }
 
     GLog_updateAI();
-    GLog_updatebullets();
+    GLog_updateBullets();
     GLog_updateMove();
     GLog_updateBonus();
 
@@ -593,7 +591,7 @@ void GLog_initGamer(u8 player_idx) {
         game_player[player_idx].type = 0;
         if (mods.pl_en_tank) game_player[player_idx].type = 4;
         game_player[player_idx].ship = 0;
-        game_player[player_idx].grass_trim = 0;
+        game_player[player_idx].woods_trim = 0;
     }
     freeze_players = 0;
     game_player[player_idx].hitpoint = 1;
@@ -621,8 +619,8 @@ void GLog_initGamer(u8 player_idx) {
     }
     victory_timer = 0;
 
-//    if ((config.debug & BONUS_GOD) == BONUS_GOD) {
-//        game_player[player_idx].bonus = BONUS_GOD;
+//    if ((config.debug & BONUS_HELMET) == BONUS_HELMET) {
+//        game_player[player_idx].bonus = BONUS_HELMET;
 //        game_player[0].god = 1024*100;
 //    }
 }
@@ -761,7 +759,7 @@ void GLog_initEnemy() {
     birth_timer = current_birth_time;
 
     buff->uranium_bullets = 0;
-    buff->grass_trim = 0;
+    buff->woods_trim = 0;
     buff->god = 0;
     buff->player = 0;
 
@@ -811,6 +809,7 @@ void GLog_initLevel(u16 level) {
     armor_staff = 0;
     drawStage();
     bonus.type = 0;
+    scor.timer = 0;
     freeze = 0;
     VDP_setPalette(0, pal_red);
     VDP_setPalette(1, pal_yellow);
@@ -974,16 +973,16 @@ void setBonus(u8 player) {
 
     u16 i;
     switch (bonus.type) {
-        case BONUS_GOD:
+        case BONUS_HELMET:
             game_player[player].god = 1024;
             break;
-        case BONUS_TIME:
+        case BONUS_CLOCK:
             if (player == 0 || player == 1)
                 freeze = 1024;
             else
                 freeze_players = 1024;
             break;
-        case BONUS_ARM_STAFF:
+        case BONUS_SCOOP:
             if (player == 0 || player == 1)
                 armor_staff = ARMOR_STAFF_TIME;
             else
@@ -1040,7 +1039,7 @@ void setBonus(u8 player) {
                 }
             }
             break;
-        case BONUS_BOMB:
+        case BONUS_GRENADE:
             if (player == 0 || player == 1) {
                 for (i = 2; i < config.units_on_map; i++) {
                     if (game_player[i].hitpoint) {
@@ -1063,7 +1062,7 @@ void setBonus(u8 player) {
                 }
             }
             break;
-        case BONUS_LIFE:
+        case BONUS_TANK:
             if (player == 0 || player == 1) {
                 game_player[player].lives++;
                 soundPlay(snd_live_got, sizeof(snd_live_got), SOUND_PCM_CH1, FALSE);
@@ -1080,7 +1079,7 @@ void setBonus(u8 player) {
                 game_player[player].bullet_limit = 2;
                 game_player[player].uranium_bullets = 1;
                 game_player[player].hp = 1;
-                game_player[player].grass_trim = 1;
+                game_player[player].woods_trim = 1;
             }
             else {
                 game_player[player].type = 7;
@@ -1089,7 +1088,7 @@ void setBonus(u8 player) {
                 game_player[player].bullet_limit = 2;
                 game_player[player].bullet_speed = BULLET_SPEED_2;
                 game_player[player].uranium_bullets = 1;
-                game_player[player].grass_trim = 1;
+                game_player[player].woods_trim = 1;
             }
             break;
         case BONUS_SHIP:
@@ -1097,7 +1096,7 @@ void setBonus(u8 player) {
             break;
     }
     //startPlaySample(snd_bonus_take, sizeof(snd_bonus_take), 10000, AUDIO_PAN_CENTER, 9);
-    if (bonus.type != BONUS_LIFE) {
+    if (bonus.type != BONUS_TANK) {
         soundPlay(snd_bonus_got, sizeof(snd_bonus_got), SOUND_PCM_CH1, FALSE);
     }
     showScoreQuad(4, bonus.posx, bonus.posy);
@@ -1130,7 +1129,7 @@ void updateArmorStaff() {
 
     armor_staff--;
     if (armor_staff == ARMOR_STAFF_TIME - 1 || armor_staff < 256) {
-        u8 armor_tile = RES_TILE_ARMOR;
+        u8 armor_tile = RES_TILE_STEEL;
         if ((armor_staff & 31) > 16 && armor_staff < ARMOR_STAFF_TIME - 20)
             armor_tile = RES_TILE_BRICK;
         if (!armor_staff)

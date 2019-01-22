@@ -60,14 +60,13 @@ typedef struct {
     s16 type;
     s16 fire_timer;
     s16 uranium_bullets;
-    s16 dirt;
+    s16 ice;
     s32 scor;
     s16 hp;
     s16 ship;
 
-    s16 bullet_delay;
-    s16 on_dirt;
-    s16 grass_trim;
+    s16 on_ice;
+    s16 woods_trim;
     s16 player;
     s16 tank_type;
 } _tank;
@@ -78,6 +77,7 @@ typedef struct {
     s16 rotate;
     s16 speed;
     s16 ricocheted;
+    s16 destroy_timer;
     _tank *maker;
 } _bullet;
 
