@@ -4,6 +4,51 @@
 #include "resmap.h"
 #include "defs.h"
 
+const u8 map_objects[] = {
+
+    0, 0,
+    0, 0,
+
+    0, RES_TILE_BRICK,
+    0, RES_TILE_BRICK,
+
+    0, 0,
+    RES_TILE_BRICK, RES_TILE_BRICK,
+
+    RES_TILE_BRICK, 0,
+    RES_TILE_BRICK, 0,
+
+    RES_TILE_BRICK, RES_TILE_BRICK,
+    0, 0,
+
+    RES_TILE_BRICK, RES_TILE_BRICK,
+    RES_TILE_BRICK, RES_TILE_BRICK,
+
+    0, RES_TILE_STEEL,
+    0, RES_TILE_STEEL,
+
+    0, 0,
+    RES_TILE_STEEL, RES_TILE_STEEL,
+
+    RES_TILE_STEEL, 0,
+    RES_TILE_STEEL, 0,
+
+    RES_TILE_STEEL, RES_TILE_STEEL,
+    0, 0,
+
+    RES_TILE_STEEL, RES_TILE_STEEL,
+    RES_TILE_STEEL, RES_TILE_STEEL,
+
+    RES_TILE_RIVER, RES_TILE_RIVER,
+    RES_TILE_RIVER, RES_TILE_RIVER,
+
+    RES_TILE_WOODS, RES_TILE_WOODS,
+    RES_TILE_WOODS, RES_TILE_WOODS,
+
+    RES_TILE_ICE, RES_TILE_ICE,
+    RES_TILE_ICE, RES_TILE_ICE,
+};
+
 
 u16 current_map[MAP_LEN];
 VDPPlan map_plan;
@@ -13,30 +58,50 @@ void setMapEx(VDPPlan plan, const u8 *map, u8 game_mode, u8 fake) {
     u16 i = 0;
     map_plan = plan;
 
-    for (i = 0; i < MAP_LEN; i++) {
-        current_map[i] = map[i];
-        if (!fake) {
-            if (game_mode && current_map[i] == RES_TILE_WOODS) {
-                current_map[i] |= TILE_ATTR(0, 1, 0, 0);
+    // Compressed
+    if (game_mode == MAP_GAMEMODE_COMPRESSED) {
+        for (i = 0; i < MAP_LEN / 4; i++) {
+            u8 obj_index = map[i >> 1];
+            if (i & 1) {
+                obj_index >>= 4;
             }
+            else {
+                obj_index &= 0xF;
+            }
+
+            u16 x = (i * 2) % MAP_W + (i * 2 / MAP_W) * MAP_W * 2;
+            current_map[x + 0        ] = map_objects[(obj_index << 2) + 0];
+            current_map[x + 1        ] = map_objects[(obj_index << 2) + 1];
+            current_map[x + 0 + MAP_W] = map_objects[(obj_index << 2) + 2];
+            current_map[x + 1 + MAP_W] = map_objects[(obj_index << 2) + 3];
+        }
+
+        mapSetTile(RES_TILE_BRICK, START_X_ST - 1, START_Y_ST - 1);
+        mapSetTile(RES_TILE_BRICK, START_X_ST + 2, START_Y_ST - 1);
+    }
+    else {
+        for (i = 0; i < MAP_LEN; i++) {
+            current_map[i] = map[i];
         }
     }
 
-    if (game_mode) {
-        mapSetTile(0, START_X_EN_A + 0, 0);
-        mapSetTile(0, START_X_EN_A + 1, 0);
-        mapSetTile(0, START_X_EN_A + 0, 1);
-        mapSetTile(0, START_X_EN_A + 1, 1);
+    if (game_mode != MAP_GAMEMODE_FALSE) {
+        if (!fake) {
+            for (i = 0; i < MAP_LEN; i++) {
+                if (current_map[i] == RES_TILE_WOODS) {
+                    current_map[i] |= TILE_ATTR(PAL0, 1, 0, 0);
+                }
+            }
+        }
 
-        mapSetTile(0, START_X_EN_B + 0, 0);
-        mapSetTile(0, START_X_EN_B + 1, 0);
-        mapSetTile(0, START_X_EN_B + 0, 1);
-        mapSetTile(0, START_X_EN_B + 1, 1);
+        mapSetTile(0, START_X_EN_A + 0, 0); mapSetTile(0, START_X_EN_A + 1, 0);
+        mapSetTile(0, START_X_EN_A + 0, 1); mapSetTile(0, START_X_EN_A + 1, 1);
 
-        mapSetTile(0, START_X_EN_C + 0, 0);
-        mapSetTile(0, START_X_EN_C + 1, 0);
-        mapSetTile(0, START_X_EN_C + 0, 1);
-        mapSetTile(0, START_X_EN_C + 1, 1);
+        mapSetTile(0, START_X_EN_B + 0, 0); mapSetTile(0, START_X_EN_B + 1, 0);
+        mapSetTile(0, START_X_EN_B + 0, 1); mapSetTile(0, START_X_EN_B + 1, 1);
+
+        mapSetTile(0, START_X_EN_C + 0, 0); mapSetTile(0, START_X_EN_C + 1, 0);
+        mapSetTile(0, START_X_EN_C + 0, 1); mapSetTile(0, START_X_EN_C + 1, 1);
 
         mapSetTile(0, START_X_PL_A + 0, START_Y_PL_A + 0);
         mapSetTile(0, START_X_PL_A + 1, START_Y_PL_A + 0);
@@ -61,7 +126,6 @@ void mapSetTile(u16 val, u8 x, u8 y) {
 
     current_map[x + y * MAP_H] = val;
     VDP_setTileMapXY(map_plan, val, x + MAP_X, y + MAP_Y);
-    //VDP_setTile(map_plan, val, x + MAP_X, y + MAP_Y);
 }
 
 u16 mapGetTile(u16 x, u16 y) {
@@ -72,7 +136,6 @@ u16 mapGetTile(u16 x, u16 y) {
 void mapRepaint() {
 
     VDP_setTileMapDataRect(map_plan, current_map, MAP_X, MAP_Y, MAP_W, MAP_H);
-    //VDP_setTileRectDma(map_plan, current_map, MAP_X, MAP_Y, MAP_W, MAP_H);
 }
 
 void setMap(VDPPlan plan, const u8 *map, u8 game_mode) {
@@ -84,11 +147,11 @@ void setFakeMap(const u8 *map, u8 game_mode) {
 }
 
 void setMapLevel(u8 lvl) {
-    setMap(PLAN_B, MAP_GAME_MAP * MAP_LEN + (config.maps_data + lvl % MAP_AVAILABLE * MAP_LEN), TRUE);
+    setMap(PLAN_B, MAP_GAME_MAP * MAP_LEN + (config.maps_data + lvl % MAP_AVAILABLE * MAP_COMPRESSED_LEN), MAP_GAMEMODE_COMPRESSED);
 }
 
 void setFakeMapLevel(u8 lvl) {
-    setFakeMap(MAP_GAME_MAP * MAP_LEN + (config.maps_data + lvl % MAP_AVAILABLE * MAP_LEN), TRUE);
+    setFakeMap(MAP_GAME_MAP * MAP_LEN + (config.maps_data + lvl % MAP_AVAILABLE * MAP_COMPRESSED_LEN), MAP_GAMEMODE_COMPRESSED);
 }
 
 void setMapsData(const u8 *map) {

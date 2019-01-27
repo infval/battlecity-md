@@ -38,7 +38,7 @@ void startOption() {
 
     VDP_fillTileMapRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
 
-    setMap(PLAN_B, option_data, FALSE);
+    setMap(PLAN_B, option_data, MAP_GAMEMODE_FALSE);
 
     VDP_setPalette(0, pal_info_screen);
 
@@ -234,7 +234,7 @@ void customGameOption() {
 
     VDP_fillTileMapRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
 
-    setMap(PLAN_B, game_config_data, FALSE);
+    setMap(PLAN_B, game_config_data, MAP_GAMEMODE_FALSE);
 
     VDP_setPalette(0, pal_info_screen);
 

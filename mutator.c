@@ -1,6 +1,5 @@
 #include <genesis.h>
 #include "mutator.h"
-//#include "stack.h"
 #include "defs.h"
 
 extern _mods mods;
@@ -15,14 +14,14 @@ void initMods() {
 static const char* mods_text[] = {
       "enemy's speed increased"
     , "enemy's armor increased"
-    , "enemy crushes concrete walls"
+    , "enemy crushes steel walls"
     , "enemy's shells speed increased"
     , "enemy's spawn speed increased"
     , "number of enemies increased"
     , "enemy used player skin"
     , "player's speed decrease"
     , "player used enemy skin"
-    , "rubber concrete walls"
+    , "rubber steel walls"
     , "enemy goes through walls"
     , "player kills player"
     , "no bonuses"

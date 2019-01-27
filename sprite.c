@@ -20,7 +20,6 @@ void spriteInit() {
     sprite_counter = 0;
     VDP_resetSprites();
     VDP_updateSprites(1, TRUE);
-    //VDP_updateSprites();
 }
 
 void drawSprite2x2(u16 sprite_atr, s16 x, s16 y) {
@@ -53,12 +52,6 @@ void drawSprite4x1(u16 sprite_atr, s16 x, s16 y) {
     sprite_counter++;
 }
 
-void drawSpritePixel(u16 sprite_atr, s16 x, s16 y) {
-
-    VDP_setSpriteFull(sprite_counter, x + MAP_PIXEL_X, y + MAP_PIXEL_Y, 0, sprite_atr, sprite_counter+1);
-    sprite_counter++;
-}
-
 void updateSprite() {
 
     ani_counter++;
@@ -84,8 +77,6 @@ void updateSprite() {
 
     if (sprite_counter > spr_kl) spr_kl = sprite_counter;
 
-    VDP_refreshHighestAllocatedSpriteIndex();
-
     VDP_updateSprites(sprite_counter, TRUE);
 
     sprite_counter = 0;
@@ -100,8 +91,6 @@ void drawTank(_tank *sprite) {
         return;
     if (sprite->freeze && (ani_counter & 31) < 16)
         return;
-
-//        drawSpritePixel(RES_TILE_ICE | TILE_PAL(color), sprite->posx, sprite->posy);
 
     if (sprite->birth) {
         drawSprite2x2(SPRITE_ADDR_BIRTH + ((sprite->birth >> 2 & 3) << 2), sprite->posx, sprite->posy);
@@ -144,5 +133,5 @@ void drawBonus(_bonus *bonus) {
     if ((ani_counter & 15) < 8)
         return;
 
-    drawSprite2x2((SPRITE_BONUS + ((bonus->type - 1) << 2)) | TILE_ATTR(0, 1, 0, 0), bonus->posx, bonus->posy);
+    drawSprite2x2((SPRITE_BONUS + ((bonus->type - 1) << 2)) | TILE_ATTR(PAL3, 1, 0, 0), bonus->posx, bonus->posy);
 }

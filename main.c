@@ -54,11 +54,10 @@ int main() {
             continue;
         }
         else if ((menuGetSelectedItem() == ITEM_ONE_PLAYER) || (menuGetSelectedItem() == ITEM_TWO_PLAYER)) {
-            setRandomSeed(getTime(getTick()));
+            setRandomSeed(getTick());
             modeMenu();
         }
 
-//        showScore();
         startGame();
 
         startGameOver();
@@ -101,15 +100,12 @@ void showSegaLogo() {
     u16 y = (28 - SEGA_LOGO_H) / 2;
     VDP_setPalette(0, palette_black);
     VDP_fillTileMapRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
-    //VDP_fillTileRect(APLAN, 0, 0, 0, vdp_plan_w, vdp_plan_h);
     VDP_fillTileMapRectInc(PLAN_B, RES_GFX_ADDR_LOGO, x, y, SEGA_LOGO_W, SEGA_LOGO_H);
-    //VDP_fillTileRectInc(APLAN, RES_GFX_ADDR_LOGO, x, y, SEGA_LOGO_W, SEGA_LOGO_H);
     pal_buff[0] = 0;
     pal_buff[1] = 0xfff;
     for (i = 0; i < 9; i++)
         pal_buff[i + 2] = pal_logo[(i + scroll) & 0xF];
     VDP_fadePalTo(0, pal_buff, 16, 0);
-    //VDP_fadeTo(0, pal_buff, 16, 0);
     sleepFrames(16);
 
     for (u = 0; u < 40; u++) {
@@ -125,7 +121,6 @@ void showSegaLogo() {
             break;
     }
     VDP_fadePalTo(0, palette_black, 16, 0);
-    //VDP_fadeTo(0, palette_black, 16, 0);
     sleepFrames(32);
 }
 
@@ -134,13 +129,6 @@ void showMessage() {
     VDP_setPalette(0, palette_black);
     VDP_fillTileMapRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
 
-//    VDP_fillTileMapRectInc(PLAN_B, RES_GFX_ADDR_KZZLOGO, 5, 4, 28, 7);
-    //VDP_fillTileRectInc(PLAN_B, RES_GFX_ADDR_KZZLOGO, 5, 4, 28, 8);
-//    u8 *check;
-//    u8 check_ctr = 0;
-    //char a[22];
-    //intToStr(tile_idx, a, 6);
-//    uint16ToStr(GAME_VERSION, str_version, 200);
     VDP_drawTextBG(PLAN_B, "battlecity-md vX.XX-X", (40 - sizeof("battlecity-md vX.XX-X"))/2, 0);
     VDP_drawTextBG(PLAN_B, GAME_VERSION, (40 - sizeof("battlecity-md vX.XX-X"))/2 + sizeof("battlecity-md "), 0);
     VDP_drawTextBG(PLAN_B, GAME_BUILD, (40 - sizeof("battlecity-md vX.XX-X"))/2 + sizeof("battlecity-md vX.XX"), 0);
@@ -160,7 +148,6 @@ void showMessage() {
     VDP_drawTextBG(PLAN_B, "for testing and bugs fixing", (40 - sizeof("for testing and bugs fixing")) / 2, 27);
 
     VDP_fadePalTo(0, pal_info_screen, 16, 0);
-    //VDP_fadeTo(0, pal_info_screen, 16, 0);
 
     u16 i;
     u16 joy;
@@ -173,7 +160,6 @@ void showMessage() {
         VDP_waitVSync();
     }
     VDP_fadePalTo(0, palette_black, 16, 0);
-    //VDP_fadeTo(0, palette_black, 16, 0);
 }
 
 

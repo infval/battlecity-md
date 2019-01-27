@@ -37,7 +37,7 @@
 #define BONUS_SHIP                  8
 
 #define GAME_VERSION                "1.08"
-#define GAME_BUILD                  "16"
+#define GAME_BUILD                  "17"
 
 
 // ================== GAME CONFIG ===================

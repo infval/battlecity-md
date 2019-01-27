@@ -17,8 +17,8 @@ void GRend_prepareRepaint() {
     if (pause && (river_strobe & 16)) {
         x = (MAP_W >> 1 << 3) - 20;
         y = (MAP_H >> 1 << 3) + 1;
-        drawSprite4x1(SPRITE_PAUSE | TILE_ATTR(0, 1, 0, 0), x, y);             // PAUS
-        drawSprite1x1((SPRITE_PAUSE + 4) | TILE_ATTR(0, 1, 0, 0), x + 8*4, y); // E
+        drawSprite4x1(SPRITE_PAUSE       | TILE_ATTR(PAL0, 1, 0, 0), x,       y); // PAUS
+        drawSprite1x1((SPRITE_PAUSE + 4) | TILE_ATTR(PAL0, 1, 0, 0), x + 8*4, y); // E
     }
 
     if (scor.timer) {
@@ -74,12 +74,12 @@ void GRend_repaint() {
     river_strobe++;
     if (!pause) {
         if ((river_strobe & 63) == 0) {
+            VDP_setPaletteColor(RES_COLOR_RIVER1_ADDR, pal_red[RES_COLOR_RIVER3_ADDR]);
             VDP_setPaletteColor(RES_COLOR_RIVER2_ADDR, pal_red[RES_COLOR_RIVER1_ADDR]);
-            VDP_setPaletteColor(RES_COLOR_RIVER3_ADDR, pal_red[RES_COLOR_RIVER2_ADDR]);
         }
         else if ((river_strobe & 63) == 32) {
-            VDP_setPaletteColor(RES_COLOR_RIVER3_ADDR, pal_red[RES_COLOR_RIVER1_ADDR]);
-            VDP_setPaletteColor(RES_COLOR_RIVER2_ADDR, pal_red[RES_COLOR_RIVER2_ADDR]);
+            VDP_setPaletteColor(RES_COLOR_RIVER2_ADDR, pal_red[RES_COLOR_RIVER3_ADDR]);
+            VDP_setPaletteColor(RES_COLOR_RIVER1_ADDR, pal_red[RES_COLOR_RIVER1_ADDR]);
         }
     }
 }

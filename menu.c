@@ -33,7 +33,7 @@ void startMenu(s8 do_scroll) {
 
     VDP_fillTileMapRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
 
-    setMap(PLAN_B, maps_data, FALSE);
+    setMap(PLAN_B, maps_data, MAP_GAMEMODE_FALSE);
 
     drawNum(top_scor, 136 / 8, 1);
     drawNum(game_player[0].scor, 56 / 8, 1);
@@ -81,7 +81,7 @@ void modeMenu() {
 
     VDP_fillTileMapRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
 
-    setMap(PLAN_B, menu_data, FALSE);
+    setMap(PLAN_B, menu_data, MAP_GAMEMODE_FALSE);
 
     drawNum(top_scor, 136 / 8, 1);
     drawNum(game_player[0].scor, 56 / 8, 1);

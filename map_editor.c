@@ -8,7 +8,6 @@
 
 u8 editor_map[MAP_W * MAP_H];
 u8 map_editor_map_ready;
-#define JOY_CROSS_MASK  (BUTTON_UP | BUTTON_DOWN | BUTTON_LEFT | BUTTON_RIGHT)
 
 s8 object_selector;
 s8 selector_x;
@@ -19,53 +18,6 @@ u8 moved;
 void joyEventEditor(u16 joy, u16 changed, u16 state);
 void setObject();
 
-const u8 map_objects[] = {
-
-    0, 0,
-    0, 0,
-
-    0, RES_TILE_BRICK,
-    0, RES_TILE_BRICK,
-
-    0, 0,
-    RES_TILE_BRICK, RES_TILE_BRICK,
-
-    RES_TILE_BRICK, 0,
-    RES_TILE_BRICK, 0,
-
-    RES_TILE_BRICK, RES_TILE_BRICK,
-    0, 0,
-
-    RES_TILE_BRICK, RES_TILE_BRICK,
-    RES_TILE_BRICK, RES_TILE_BRICK,
-
-    0, RES_TILE_STEEL,
-    0, RES_TILE_STEEL,
-
-    0, 0,
-    RES_TILE_STEEL, RES_TILE_STEEL,
-
-    RES_TILE_STEEL, 0,
-    RES_TILE_STEEL, 0,
-
-    RES_TILE_STEEL, RES_TILE_STEEL,
-    0, 0,
-
-    RES_TILE_STEEL, RES_TILE_STEEL,
-    RES_TILE_STEEL, RES_TILE_STEEL,
-
-    RES_TILE_RIVER, RES_TILE_RIVER,
-    RES_TILE_RIVER, RES_TILE_RIVER,
-
-    RES_TILE_WOODS, RES_TILE_WOODS,
-    RES_TILE_WOODS, RES_TILE_WOODS,
-
-    RES_TILE_ICE, RES_TILE_ICE,
-    RES_TILE_ICE, RES_TILE_ICE,
-
-
-};
-
 void startMapEditor() {
 
     u16 joy;
@@ -75,13 +27,12 @@ void startMapEditor() {
     VDP_setPalette(0, palette_black);
     VDP_resetSprites();
     VDP_updateSprites(1, TRUE);
-    //VDP_updateSpritesDma();
 
     VDP_fillTileMapRect(PLAN_B, RES_TILE_GREY, 0, 0, 32, 28);
 
     if (!map_editor_map_ready) {
         memset(editor_map, 0, sizeof(editor_map));
-        setMap(PLAN_B, editor_map, FALSE);
+        setMap(PLAN_B, editor_map, MAP_GAMEMODE_FALSE);
         mapSetTile(RES_TILE_STAFF + 0, START_X_ST + 0, START_Y_ST + 0);
         mapSetTile(RES_TILE_STAFF + 1, START_X_ST + 0, START_Y_ST + 1);
         mapSetTile(RES_TILE_STAFF + 2, START_X_ST + 1, START_Y_ST + 0);
@@ -94,7 +45,7 @@ void startMapEditor() {
         }
     }
     else {
-        setMap(PLAN_B, editor_map, FALSE);
+        setMap(PLAN_B, editor_map, MAP_GAMEMODE_FALSE);
     }
 
     map_editor_map_ready = FALSE;
@@ -111,7 +62,7 @@ void startMapEditor() {
     for (; !map_editor_map_ready;) {
 
         joy = JOY_readJoypad(JOY_1);
-        if (joy & JOY_CROSS_MASK) {
+        if (joy & BUTTON_DIR) {
             cross_press_timer++;
         }
         else {
@@ -139,7 +90,7 @@ void joyEventEditor(u16 joy, u16 changed, u16 state) {
 
     u16 i;
 
-    if (JOY_CROSS_MASK & changed) {
+    if (BUTTON_DIR & changed) {
         moved = 1;
     }
 

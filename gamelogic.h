@@ -98,6 +98,7 @@ void GLog_initGameLogic();
 u8 GLog_gameover();
 u8 GLog_victory();
 void GLog_setVictory();
+u8 GLog_victoryTimer();
 void GLog_removeEnemy();
 
 extern u16 pause;

@@ -2,7 +2,7 @@
 #define _RES_RESOURCES_H_
 
 extern const u8 snd_begin[92160];
-extern const u8 snd_gameover[59904];
+extern const u8 snd_gameover[37120];
 extern const u8 snd_bull_stop[1280];
 extern const u8 snd_armor_hit[1024];
 extern const u8 snd_bonus_appears[8960];

@@ -12,7 +12,6 @@
 #include "defs.h"
 #include "resources.h"
 #include "gamelogic.h"
-//#include "audio.h"
 
 void showGameoverWord();
 void setOrangeColor();
@@ -36,15 +35,9 @@ void startGameOver() {
 }
 
 void showScore() {
-//     test points
-//    kills_1[0] = 5;
-//    kills_1[1] = 6;
-//    kills_1[2] = 4;
-//    kills_1[3] = 7;
-//    kills_2[0] = 2;
-//    kills_2[1] = 3;
-//    kills_2[2] = 10;
-//    kills_2[3] = 5;
+
+    VDP_resetSprites();
+    VDP_updateSprites(1, FALSE);
 
     u8 i;
     if (menuGetSelectedItem() == ITEM_ONE_PLAYER) {
@@ -62,16 +55,14 @@ void showScore() {
     u8 play_sound;
 
     VDP_setPalette(0, palette_black);
-//    VDP_setPalette(1, palette_black);
     VDP_fillTileMapRect(PLAN_A, 0, 0, 0, planWidth, planHeight);
     VDP_fillTileMapRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
-//    VDP_fillTileMapRect(PLAN_B, 0, 0, 0, 32, 28);
 
     if (menuGetSelectedItem() == ITEM_ONE_PLAYER) {
-        setMap(PLAN_B, &maps_data[MAP_SCORE1 * MAP_LEN], FALSE);
+        setMap(PLAN_B, &maps_data[MAP_SCORE1 * MAP_LEN], MAP_GAMEMODE_FALSE);
     }
     else {
-        setMap(PLAN_B, &maps_data[MAP_SCORE2 * MAP_LEN], FALSE);
+        setMap(PLAN_B, &maps_data[MAP_SCORE2 * MAP_LEN], MAP_GAMEMODE_FALSE);
     }
 
     setOrangeColor();
@@ -185,11 +176,9 @@ void showGameoverWord() {
 
     VDP_setPalette(0, palette_black);
     VDP_fillTileMapRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
-    //VDP_fillTileRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
-    setMap(PLAN_B, &maps_data[MAP_GAMEOVER * MAP_LEN], FALSE);
+    setMap(PLAN_B, &maps_data[MAP_GAMEOVER * MAP_LEN], MAP_GAMEMODE_FALSE);
     VDP_resetSprites();
     VDP_updateSprites(1, FALSE);
-    //VDP_updateSprites();
     VDP_setPalette(0, pal_red);
     //startPlaySample(snd_gameover, sizeof(snd_gameover), 10000, AUDIO_PAN_CENTER, 9);
     SND_startPlay_PCM(snd_gameover, sizeof(snd_gameover), SOUND_RATE_22050, SOUND_PAN_CENTER, 0);
@@ -204,18 +193,18 @@ void setOrangeColor() {
 
         tile = mapGetTile(i, 1);
         if (i < MAP_W >> 1) {
-            tile |= TILE_ATTR(1, 0, 0, 0);
+            tile |= TILE_ATTR(PAL1, 0, 0, 0);
         }
         else {
-            tile |= TILE_ATTR(2, 0, 0, 0);
+            tile |= TILE_ATTR(PAL2, 0, 0, 0);
         }
         mapSetTile(tile, i, 1);
         tile = mapGetTile(i, 5);
-        tile |= TILE_ATTR(1, 0, 0, 0);
+        tile |= TILE_ATTR(PAL1, 0, 0, 0);
         mapSetTile(tile, i, 5);
 
         tile = mapGetTile(i, 7);
-        tile |= TILE_ATTR(2, 0, 0, 0);
+        tile |= TILE_ATTR(PAL2, 0, 0, 0);
         mapSetTile(tile, i, 7);
     }
 }

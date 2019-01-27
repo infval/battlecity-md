@@ -7,15 +7,19 @@
 #define MAP_Y 1
 #define MAP_PIXEL_X (MAP_X << 3)
 #define MAP_PIXEL_Y (MAP_Y << 3)
-#define MAP_LEN MAP_W * MAP_H
+#define MAP_LEN     (MAP_W * MAP_H)
+#define MAP_COMPRESSED_LEN ((MAP_LEN/4+1)/2)
+#define MAP_GAMEMODE_FALSE        0
+#define MAP_GAMEMODE_COMPRESSED   1
+#define MAP_GAMEMODE_UNCOMPRESSED 2
 #define MAP_START_MENU 0
-#define MAP_GAMEOVER 1
-#define MAP_SCORE1 2
-#define MAP_SCORE2 3
-#define MAP_GAME_MAP 4
-#define MAP_AVAILABLE 35
+#define MAP_GAMEOVER   1
+#define MAP_SCORE1     2
+#define MAP_SCORE2     3
+#define MAP_GAME_MAP   4
+#define MAP_AVAILABLE  35
 
-#define MAP_COUNT 70
+//#define MAP_COUNT 70
 
 
 #define START_X_PL_A 8
@@ -30,6 +34,7 @@
 #define START_X_ST 12
 #define START_Y_ST 24
 
+extern const u8 map_objects[];
 extern u16 current_map[];
 
 void setMap(VDPPlan plan, const u8 *map, u8 game_mode);

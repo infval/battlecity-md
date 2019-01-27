@@ -11,7 +11,6 @@
 #include "gamelogic.h"
 #include "gamerender.h"
 #include "defs.h"
-//#include "audio.h"
 #include "resources.h"
 #include "option.h"
 #include "mutator.h"
@@ -81,7 +80,7 @@ void startGame() {
     VDP_setPalette(2, pal_green);
     VDP_setPalette(3, pal_grey);
     selected_stage = -1;
-    gameover = 0;
+    gameover = FALSE;
 
     JOY_setEventHandler(joyEventGame);
 
@@ -204,6 +203,8 @@ void startLevel() {
 
     for (i = 0; i < config.max_bullets; i++)
         bullets[i].speed = 0;
+    for (i = 0; i < config.max_explode; i++)
+        explodes[i].type = 0;
 
 //    VDP_fillTileMapRect(PLAN_B, 0, 0, 0, planWidth, planHeight);
     VDP_fillTileMapRect(PLAN_A, RES_TILE_GREY, 0, 0, 32, 28);
@@ -214,7 +215,7 @@ void startLevel() {
 
     // Fake background for screen opening
     if (map_editor_map_ready) {
-        setFakeMap(editor_map, 1);
+        setFakeMap(editor_map, MAP_GAMEMODE_UNCOMPRESSED);
     } else {
         setFakeMapLevel(selected_stage);
     }
@@ -265,11 +266,10 @@ void startLevel() {
 
 void joyEventGame(u16 joy, u16 changed, u16 state) {
 
-    const u16 pressed = state & changed;
-
     if (GLog_gameover())
         return;
 
+    const u16 pressed = state & changed;
     const u16 player_index = (joy == JOY_1) ? 0 : 1;
 
     if ((pressed & BUTTON_START) /*&& !gameover*/ && level_timer > 180) {
@@ -331,8 +331,8 @@ void drawGameover() {
     s16 word_y = MAP_H * 8 - game_over_timer;
 
     if (word_y < MAP_H / 2 * 8 - 14) word_y = MAP_H / 2 * 8 - 14;
-    drawSprite4x1( SPRITE_GAMEOVER      | TILE_ATTR(0, 1, 0, 0), word_x, word_y);
-    drawSprite4x1((SPRITE_GAMEOVER + 4) | TILE_ATTR(0, 1, 0, 0), word_x, word_y + 8);
+    drawSprite4x1( SPRITE_GAMEOVER      | TILE_ATTR(PAL0, 1, 0, 0), word_x, word_y);
+    drawSprite4x1((SPRITE_GAMEOVER + 4) | TILE_ATTR(PAL0, 1, 0, 0), word_x, word_y + 8);
 }
 
 
@@ -342,8 +342,8 @@ void updateAudio() {
     if (GLog_gameover() || pause) {
         return;
     }
-    extern u16 victory_timer;
-    if ((game_player[0].hitpoint || game_player[1].hitpoint) && victory_timer == 0) speed = 1;
+
+    if ((game_player[0].hitpoint || game_player[1].hitpoint) && GLog_victoryTimer() == 0) speed = 1;
 
     if (game_player[0].hitpoint && game_player[0].speed != 0) speed = 2;
     if (game_player[1].hitpoint && game_player[1].speed != 0) speed = 2;

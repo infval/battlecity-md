@@ -6,7 +6,6 @@
 #include "resmap.h"
 #include "defs.h"
 #include "resources.h"
-//#include "audio.h"
 
 s16 tileAfterHit(u16 tile_idx, u16 bullet_rotate, u16 dip);
 void tileReaction(_bullet *bull, s16 *after_hit, u8 *kill_bull, s16 *x0, s16 *y0, u8 xShift, u8 yShift);
@@ -28,11 +27,20 @@ u8 moveAvailableInUnits(_tank *tank) {
         delta_y = y - buff->posy;
         if (delta_x < 0) delta_x = -delta_x;
         if (delta_y < 0) delta_y = -delta_y;
-        if (delta_x < 16 && delta_y < 16)
-            return delta_x + delta_y;
+        if (delta_x < 16 && delta_y < 16) {
+            x += speed_x[tank->rotate];
+            y += speed_y[tank->rotate];
+
+            s16 d = delta_x + delta_y;
+            delta_x = x - buff->posx;
+            delta_y = y - buff->posy;
+            if (delta_x < 0) delta_x = -delta_x;
+            if (delta_y < 0) delta_y = -delta_y;
+            return d < delta_x + delta_y;
+        }
     }
 
-    return 32;
+    return TRUE;
 }
 
 void detectBulletToWallCollision(_bullet *bull) {
@@ -40,8 +48,6 @@ void detectBulletToWallCollision(_bullet *bull) {
     u16 tile_idx = 0;
     s16 x = bull->posx;
     s16 y = bull->posy;
-    x += speed_x[bull->rotate] << 1;
-    y += speed_y[bull->rotate] << 1;
 
     s16 x0 = x >> 3;
     s16 y0 = y >> 3;
@@ -117,7 +123,7 @@ s16 tileAfterHit(u16 tile_idx, u16 bullet_rotate, u16 dip) {
 
     if (tile_idx == RES_TILE_STEEL)
         return RES_TILE_STEEL;
-    if (tile_idx == (RES_TILE_WOODS | TILE_ATTR(0, 1, 0, 0))) {
+    if (tile_idx == (RES_TILE_WOODS | TILE_ATTR(PAL0, 1, 0, 0))) {
         return RES_TILE_WOODS;
     }
     else if (tile_idx > 16 || tile_idx == 0) {
@@ -335,13 +341,8 @@ void detectBulletToUnitsCollision(_bullet *bull) {
 void detectBulletToStaffCollision(_bullet *bull) {
 
     u16 tile_idx = 0;
-    s16 x = bull->posx;
-    s16 y = bull->posy;
-    x += speed_x[bull->rotate] << 1;
-    y += speed_y[bull->rotate] << 1;
-
-    x >>= 3;
-    y >>= 3;
+    s16 x = bull->posx >> 3;
+    s16 y = bull->posy >> 3;
 
     tile_idx = mapGetTile(x, y);
     if (tile_idx >= RES_TILE_STAFF && tile_idx <= RES_TILE_STAFF + 4) {
@@ -372,7 +373,7 @@ void detectBulletToBulletCollision(_bullet *bull) {
 
     while (i--) {
         buff = &bullets[i];
-        if (!buff->speed || bull->maker == buff->maker) // (bull == buff) is included 
+        if (!buff->speed || bull->maker == buff->maker) // (bull == buff) is included
             continue;
         delta_x = bull->posx - buff->posx;
         delta_y = bull->posy - buff->posy;

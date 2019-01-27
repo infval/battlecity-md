@@ -9,7 +9,6 @@
 #include "map_editor.h"
 #include "game.h"
 #include "gameover.h"
-//#include "audio.h"
 #include "resources.h"
 #include "mutator.h"
 
@@ -26,7 +25,10 @@
 
 #define START_LIVES 3
 #define START_ENEMIES 20
-#define BIRTH_TIME 64
+#define BIRTH_TIME_ENEMY 56 // 64
+#define BIRTH_TIME_PLAYER (37 + 32) // Birth + delay after destroy
+#define LVL1_RESPAWN_TIME 187
+#define LVL35_RESPAWN_TIME 51
 
 #define VDP_setTile(plan, tile, x, y) (VDP_setTileMapXY(plan, tile, x, y))
 
@@ -41,7 +43,6 @@ void GLog_makeExplode(u16 type, s16 x, s16 y);
 void updateGameMenu();
 void drawStage();
 void generateBonus(u8 bns);
-void setBonus(u8 player);
 void updateArmorStaff();
 
 u8 enemy_num;
@@ -83,8 +84,6 @@ _bullet* last_killed_bullet = NULL;
 void GLog_updateMove() {
 
     u16 i;
-    u8 delta_1;
-    u8 delta_2;
     u16 speed;
     for (i = 0; i < config.units_on_map; i++) {
         if (!game_player[i].hitpoint)
@@ -106,18 +105,11 @@ void GLog_updateMove() {
             speed = speed_counter & TANK_SPEED_2; // TODO: if mods.pl_speed_dec
         }
         if (speed) {
-            delta_1 = moveAvailableInUnits(&game_player[i]);
-            game_player[i].posx += speed_x[game_player[i].rotate];
-            game_player[i].posy += speed_y[game_player[i].rotate];
-            if (!moveAvailableInWalls(&game_player[i])) {
-                game_player[i].posx -= speed_x[game_player[i].rotate];
-                game_player[i].posy -= speed_y[game_player[i].rotate];
-                game_player[i].collision++;
+            if (moveAvailableInWalls(&game_player[i]) && moveAvailableInUnits(&game_player[i])) {
+                game_player[i].posx += speed_x[game_player[i].rotate];
+                game_player[i].posy += speed_y[game_player[i].rotate];
             }
-            delta_2 = moveAvailableInUnits(&game_player[i]);
-            if (delta_1 > delta_2) {
-                game_player[i].posx -= speed_x[game_player[i].rotate];
-                game_player[i].posy -= speed_y[game_player[i].rotate];
+            else {
                 game_player[i].collision++;
             }
         }
@@ -144,21 +136,8 @@ void GLog_updateBullets() {
         }
 
         if (bull_buff->speed == 0) continue;
-        bull_buff->posx += speed_x[bull_buff->rotate] << 1;
-        bull_buff->posy += speed_y[bull_buff->rotate] << 1;
-        detectBulletToWallCollision(bull_buff);
-        if (bull_buff->speed == 0) continue;
-        detectBulletToUnitsCollision(bull_buff);
-        if (bull_buff->speed == 0) continue;
-        detectBulletToStaffCollision(bull_buff);
-        if (bull_buff->speed == 0) continue;
-        detectBulletToBulletCollision(bull_buff);
-
-        if (bull_buff->speed != BULLET_SPEED_2)
-            continue;
-
-        bull_buff->posx += speed_x[bull_buff->rotate] << 1;
-        bull_buff->posy += speed_y[bull_buff->rotate] << 1;
+        bull_buff->posx += speed_x[bull_buff->rotate] * (1 << bull_buff->speed); // -1 << 1 -- Undefined Behavior
+        bull_buff->posy += speed_y[bull_buff->rotate] * (1 << bull_buff->speed);
         detectBulletToWallCollision(bull_buff);
         if (bull_buff->speed == 0) continue;
         detectBulletToUnitsCollision(bull_buff);
@@ -269,10 +248,8 @@ void GLog_updateAI() {
 
 void GLog_updateBonus() {
     if (mods.en_invul) {
-        if (getTimer(1, FALSE) > 2000000) {
-//        if (getTimer(1, FALSE) > 900000) {
+        if (getTimer(1, FALSE) > 1536000) { // 20 s * 76800
             generateBonus(BONUS_GRENADE);
-//            generateBonus(2);
             startTimer(1);
         }
     }
@@ -397,9 +374,6 @@ void GLog_killPlayer(_tank *victim, _tank *killer) {
             if (victim->hitpoint)
                 soundPlay(snd_armor_hit, sizeof(snd_armor_hit), SOUND_PCM_CH3, FALSE);
         }
-
-        //if (victim->hitpoint)startPlaySample(snd_bull_stop, sizeof(snd_bull_stop), 11000, AUDIO_PAN_CENTER, 6);
-        //if (victim->hitpoint) soundPlay(snd_bull_stop, sizeof(snd_bull_stop), SOUND_PCM_CH3, FALSE);
     }
     if (!victim->hitpoint) {
         if (victim != &game_player[0] && victim != &game_player[1]) {
@@ -486,43 +460,43 @@ void GLog_updateControl(u8 gamer_idx, u16 joy, u16 speed) {
         game_player[gamer_idx].speed = speed;
         game_player[gamer_idx].rotate = 0;
         temp = game_player[gamer_idx].posx;
-        if ((temp & 7) > 4)
+        if (temp & 4)//(temp & 7) >= 4)
             game_player[gamer_idx].posx = (temp >> 3 << 3) + 8;
         else
             game_player[gamer_idx].posx -= (temp & 7);
-        if (game_player[gamer_idx].posx >> 3 > MAP_W - 2)
-            game_player[gamer_idx].posx = (MAP_W - 2) << 3;
+        //if (game_player[gamer_idx].posx >> 3 > MAP_W - 2)
+        //    game_player[gamer_idx].posx = (MAP_W - 2) << 3;
 
     } else if (joy & BUTTON_LEFT) {
         game_player[gamer_idx].speed = speed;
         game_player[gamer_idx].rotate = 1;
         temp = game_player[gamer_idx].posy;
-        if ((temp & 7) > 4)
+        if (temp & 4)//(temp & 7) >= 4)
             game_player[gamer_idx].posy = (temp >> 3 << 3) + 8;
         else
             game_player[gamer_idx].posy -= (temp & 7);
-        if (game_player[gamer_idx].posy >> 3 > MAP_H - 2)
-            game_player[gamer_idx].posy = (MAP_H - 2) << 3;
+        //if (game_player[gamer_idx].posy >> 3 > MAP_H - 2)
+        //    game_player[gamer_idx].posy = (MAP_H - 2) << 3;
     } else if (joy & BUTTON_DOWN) {
         game_player[gamer_idx].speed = speed;
         game_player[gamer_idx].rotate = 2;
         temp = game_player[gamer_idx].posx;
-        if ((temp & 7) > 4)
+        if (temp & 4)//(temp & 7) >= 4)
             game_player[gamer_idx].posx = (temp >> 3 << 3) + 8;
         else
             game_player[gamer_idx].posx -= (temp & 7);
-        if (game_player[gamer_idx].posx >> 3 > MAP_W - 2)
-            game_player[gamer_idx].posx = (MAP_W - 2) << 3;
+        //if (game_player[gamer_idx].posx >> 3 > MAP_W - 2)
+        //    game_player[gamer_idx].posx = (MAP_W - 2) << 3;
     } else if (joy & BUTTON_RIGHT) {
         game_player[gamer_idx].speed = speed;
         game_player[gamer_idx].rotate = 3;
         temp = game_player[gamer_idx].posy;
-        if ((temp & 7) > 4)
+        if (temp & 4)//(temp & 7) >= 4)
             game_player[gamer_idx].posy = (temp >> 3 << 3) + 8;
         else
             game_player[gamer_idx].posy -= (temp & 7);
-        if (game_player[gamer_idx].posy >> 3 > MAP_H - 2)
-            game_player[gamer_idx].posy = (MAP_H - 2) << 3;
+        //if (game_player[gamer_idx].posy >> 3 > MAP_H - 2)
+        //    game_player[gamer_idx].posy = (MAP_H - 2) << 3;
     }
 }
 
@@ -600,7 +574,7 @@ void GLog_initGamer(u8 player_idx) {
     game_player[player_idx].rotate = 0;
 
     game_player[player_idx].speed = 0;
-    game_player[player_idx].birth = BIRTH_TIME;
+    game_player[player_idx].birth = BIRTH_TIME_PLAYER;
     game_player[player_idx].bullets_count = 0;
     game_player[player_idx].freeze = 0;
     game_player[player_idx].hp = 0;
@@ -618,11 +592,6 @@ void GLog_initGamer(u8 player_idx) {
         game_player[player_idx].player = 2;
     }
     victory_timer = 0;
-
-//    if ((config.debug & BONUS_HELMET) == BONUS_HELMET) {
-//        game_player[player_idx].bonus = BONUS_HELMET;
-//        game_player[0].god = 1024*100;
-//    }
 }
 
 void GLog_makeExplode(u16 type, s16 x, s16 y) {
@@ -645,9 +614,8 @@ void GLog_makeExplode(u16 type, s16 x, s16 y) {
 void GLog_initGameLogic() {
 
     u16 i;
-    pause = 0;
+    pause = FALSE;
     speed_counter = 128;
-    scor.timer = 0;
     gameover = FALSE;
 
     enemy_types[0].type = 4;
@@ -680,9 +648,6 @@ void GLog_initGameLogic() {
         game_player[i].lives = 0;
         game_player[i].hitpoint = 0;
         game_player[i].uranium_bullets = 0;
-    }
-    for (i = 0; i < config.max_explode; i++) {
-        explodes[i].type = 0;
     }
 
     game_player[0].lives = config.start_lives;
@@ -748,7 +713,7 @@ void GLog_initEnemy() {
     buff->rotate = 2;
     buff->posx = enemy_pos_x[enemy_num % 3];
     buff->bullets_count = 0;
-    buff->birth = BIRTH_TIME;
+    buff->birth = BIRTH_TIME_ENEMY;
     buff->hitpoint = enemy_types[tank_type].hitpoint;
     buff->color = TANK_COLOR_GREY;
     buff->bonus = (enemy_num & 3) ? 0 : 1;
@@ -773,11 +738,13 @@ void GLog_initEnemy() {
 void GLog_initLevel(u16 level) {
 
     u16 i = 0;
-    current_birth_time = 256 * (MAP_AVAILABLE - level % MAP_AVAILABLE) / MAP_AVAILABLE;
-    if (current_birth_time < BIRTH_TIME + 10)
-        current_birth_time = BIRTH_TIME + 10;
+    s16 t = level; 
+    if (t > MAP_AVAILABLE - 1) {
+        t = MAP_AVAILABLE - 1;
+    }
+    current_birth_time = LVL1_RESPAWN_TIME + (LVL35_RESPAWN_TIME - LVL1_RESPAWN_TIME) * t / (MAP_AVAILABLE-1);
     if (mods.en_spawn_speed) {
-        current_birth_time = BIRTH_TIME + 10;
+        current_birth_time = LVL35_RESPAWN_TIME;
     }
     birth_timer = 0;
     victory = FALSE;
@@ -792,14 +759,11 @@ void GLog_initLevel(u16 level) {
     GLog_initGamer(0);
     GLog_initGamer(1);
 
-//    VDP_fillTileMapRect(PLAN_B, RES_TILE_GREY, 0, 0, 32, 28);
-
     if (map_editor_map_ready) {
-        setMap(PLAN_B, editor_map, TRUE);
+        setMap(PLAN_B, editor_map, MAP_GAMEMODE_UNCOMPRESSED);
         map_editor_map_ready = FALSE;
     } else {
-//        setMap(PLAN_B, MAP_GAME_MAP * MAP_LEN + (maps_data + level % MAP_AVAILABLE * MAP_LEN), TRUE);
-        setMapLevel(selected_stage);
+        setMapLevel(level);
     }
 
 
@@ -828,6 +792,10 @@ u8 GLog_victory() {
 void GLog_setVictory() {
     GLog_removeEnemy();
     victory = TRUE;
+}
+
+u8 GLog_victoryTimer() {
+    return victory_timer;
 }
 
 void GLog_removeEnemy() {
@@ -944,10 +912,6 @@ void generateBonus(u8 bns) {
 
         bonus.type++;
 
-        /*bonus.posx = 2;
-        bonus.posy = 1;
-        bonus.type = 8;*/
-
         switch (bonus.type) {
             case 1:
                 bonus.type = 4;
@@ -962,7 +926,7 @@ void generateBonus(u8 bns) {
                 bonus.type = 1;
                 break;
             case 7:
-                if (config.addition_bonus == BONUS_SHIP)
+                if (config.addition_bonus == SHIP_BONUS)
                     bonus.type = 8;
                 break;
         }
@@ -1116,14 +1080,14 @@ void updateArmorStaff() {
 
     if (armor_staff == ARMOR_STAFF_TIME + 1) {
         armor_staff = 0;
-        mapSetTile(0, 11, 23);
-        mapSetTile(0, 11, 24);
-        mapSetTile(0, 11, 25);
-        mapSetTile(0, 12, 23);
-        mapSetTile(0, 13, 23);
-        mapSetTile(0, 14, 23);
-        mapSetTile(0, 14, 24);
-        mapSetTile(0, 14, 25);
+        mapSetTile(0, START_X_ST-1, START_Y_ST+1);
+        mapSetTile(0, START_X_ST-1, START_Y_ST+0);
+        mapSetTile(0, START_X_ST-1, START_Y_ST-1);
+        mapSetTile(0, START_X_ST+0, START_Y_ST-1);
+        mapSetTile(0, START_X_ST+1, START_Y_ST-1);
+        mapSetTile(0, START_X_ST+2, START_Y_ST-1);
+        mapSetTile(0, START_X_ST+2, START_Y_ST+0);
+        mapSetTile(0, START_X_ST+2, START_Y_ST+1);
         return;
     }
 
@@ -1135,14 +1099,14 @@ void updateArmorStaff() {
         if (!armor_staff)
             armor_tile = RES_TILE_BRICK;
 
-        mapSetTile(armor_tile, 11, 23);
-        mapSetTile(armor_tile, 11, 24);
-        mapSetTile(armor_tile, 11, 25);
-        mapSetTile(armor_tile, 12, 23);
-        mapSetTile(armor_tile, 13, 23);
-        mapSetTile(armor_tile, 14, 23);
-        mapSetTile(armor_tile, 14, 24);
-        mapSetTile(armor_tile, 14, 25);
+        mapSetTile(armor_tile, START_X_ST-1, START_Y_ST+1);
+        mapSetTile(armor_tile, START_X_ST-1, START_Y_ST+0);
+        mapSetTile(armor_tile, START_X_ST-1, START_Y_ST-1);
+        mapSetTile(armor_tile, START_X_ST+0, START_Y_ST-1);
+        mapSetTile(armor_tile, START_X_ST+1, START_Y_ST-1);
+        mapSetTile(armor_tile, START_X_ST+2, START_Y_ST-1);
+        mapSetTile(armor_tile, START_X_ST+2, START_Y_ST+0);
+        mapSetTile(armor_tile, START_X_ST+2, START_Y_ST+1);
     }
 }
 
