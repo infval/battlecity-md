@@ -105,7 +105,7 @@ void showSegaLogo() {
     pal_buff[1] = 0xfff;
     for (i = 0; i < 9; i++)
         pal_buff[i + 2] = pal_logo[(i + scroll) & 0xF];
-    VDP_fadePalTo(0, pal_buff, 16, 0);
+    VDP_fadeToPal(0, pal_buff, 16, 0);
     sleepFrames(16);
 
     for (u = 0; u < 40; u++) {
@@ -120,7 +120,7 @@ void showSegaLogo() {
         if (joy & (BUTTON_A | BUTTON_B | BUTTON_C | BUTTON_START))
             break;
     }
-    VDP_fadePalTo(0, palette_black, 16, 0);
+    VDP_fadeToPal(0, palette_black, 16, 0);
     sleepFrames(32);
 }
 
@@ -147,7 +147,7 @@ void showMessage() {
     VDP_drawTextBG(PLAN_B, "Sharpnull", (40 - sizeof("Sharpnull")) / 2, 25);
     VDP_drawTextBG(PLAN_B, "for testing and bugs fixing", (40 - sizeof("for testing and bugs fixing")) / 2, 27);
 
-    VDP_fadePalTo(0, pal_info_screen, 16, 0);
+    VDP_fadeToPal(0, pal_info_screen, 16, 0);
 
     u16 i;
     u16 joy;
@@ -159,7 +159,7 @@ void showMessage() {
             break;
         VDP_waitVSync();
     }
-    VDP_fadePalTo(0, palette_black, 16, 0);
+    VDP_fadeToPal(0, palette_black, 16, 0);
 }
 
 
