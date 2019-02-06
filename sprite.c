@@ -82,50 +82,53 @@ void updateSprite() {
     sprite_counter = 0;
 }
 
-void drawTank(_tank *sprite) {
+void drawTank(_tank *tank) {
 
     u16 color;
     u16 attr;
 
-    if (!sprite->hitpoint)
+    if (!tank->hitpoint)
         return;
-    if (sprite->freeze && (ani_counter & 31) < 16)
+    if (tank->freeze && (ani_counter & 31) < 16)
         return;
 
-    if (sprite->birth) {
-        drawSprite2x2(SPRITE_ADDR_BIRTH + ((sprite->birth >> 2 & 3) << 2), sprite->posx, sprite->posy);
+    if (tank->birth) {
+        s16 b = (tank->birth >> 2) % 6;
+        if (b > 3) b = 6 - b; // Ping Pong
+        b = 3 - b; // Max star if (tank->birth / 4) == 0
+        drawSprite2x2(SPRITE_ADDR_BIRTH + (b << 2), tank->posx, tank->posy);
         return;
     }
 
-    if (sprite->god) {
-        drawSprite2x2(SPRITE_ADDR_ARMOR + ((sprite->god >> 1 & 1) << 2), sprite->posx, sprite->posy);
+    if (tank->god) {
+        drawSprite2x2(SPRITE_ADDR_ARMOR + ((tank->god >> 1 & 1) << 2), tank->posx, tank->posy);
     }
 
-    if (sprite->ship == 1) {
-        drawSprite2x2(SPRITE_ADDR_SHIP, sprite->posx, sprite->posy);
-    }
-
-    color = sprite->color;
-    if (sprite->bonus) {
+    color = tank->color;
+    if (tank->bonus) {
         color = TANK_COLOR_GREY;
         if ((color_strobe & 0xf) < 8)
             color = TANK_COLOR_RED;
     }
     else {
-        if (sprite->hitpoint > 1 && (color_strobe & 1)) {
-            color = sprite->hitpoint == 4 ? TANK_COLOR_GREEN : TANK_COLOR_YELLOW;
+        if (tank->hitpoint > 1 && (color_strobe & 1)) {
+            color = tank->hitpoint == 4 ? TANK_COLOR_GREEN : TANK_COLOR_YELLOW;
         }
-        if (sprite->hitpoint == 2 && !(color_strobe & 1))
+        if (tank->hitpoint == 2 && !(color_strobe & 1))
             color = TANK_COLOR_GREEN;
     }
 
     attr = SPRITE_ADDR_TANK | TILE_PAL(color);
-    attr += sprite->type << 5;
-    attr += sprite->rotate << 3;
-    if (sprite->speed && !pause)
+    attr += tank->type << 5;
+    attr += tank->rotate << 3;
+    if (tank->speed && !pause)
         attr += ((ani_counter >> 2) & 1) << 2;
+    
+    if (tank->ship == 1) {
+        drawSprite2x2(SPRITE_ADDR_SHIP | TILE_PAL(color), tank->posx, tank->posy);
+    }
 
-    drawSprite2x2(attr, sprite->posx, sprite->posy);
+    drawSprite2x2(attr, tank->posx, tank->posy);
 }
 
 void drawBonus(_bonus *bonus) {

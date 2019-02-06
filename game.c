@@ -126,7 +126,7 @@ void selectLevel() {
         initMods();
     if (config.mods_inc_lvl != 0) {
         if ((stage_ctr + 1) % config.mods_inc_lvl == 0) {
-            if (config.mods_count < 6)
+            if (config.mods_count < MAX_MODS_ON_LEVEL)
                 config.mods_count++;
         }
     }

@@ -178,42 +178,12 @@ void GLog_updateAI() {
     if (birth_timer)
         birth_timer--;
 
-//    for (i = 2; i < config.units_on_map; i++) {
-//        if (game_player[i].hitpoint) enemies_on_map++;
-//    }
-
-//    if (freeze) {
-//        freeze--;
-//        for (i = 2; i < config.units_on_map; i++) {
-//            game_player[i].speed = 0;
-//            game_player[i].fire = 0;
-//        }
-//        return;
-//    }
-
-//    for (i = 2; i < config.units_on_map; i++) {
-//        if (game_player[i].freeze) {
-//            game_player[i].freeze--;
-//            game_player[i].speed = 0;
-//            game_player[i].fire = 0;
-//        }
-//        else {
-//            game_player[i].speed = enemy_types[game_player[i].tank_type].speed;
-//        }
-//    }
-
     if (freeze_players) {
         freeze_players--;
         for (i = 0; i < 2; i++) {
             game_player[i].freeze = 1;
         }
     }
-
-//    if (!game_player[2].speed) {
-//        for (i = 2; i < config.units_on_map; i++) {
-//            game_player[i].speed = 1;
-//        }
-//    }
 
     for (i = 2; i < config.units_on_map; i++) {
         if (game_player[i].freeze || freeze) {
@@ -227,9 +197,11 @@ void GLog_updateAI() {
         }
         else {
             game_player[i].speed = enemy_types[game_player[i].tank_type].speed;
+            if (mods.en_speed && game_player[i].speed == TANK_SPEED_1) {
+                game_player[i].speed = TANK_SPEED_2;
+            }
         }
 
-//        if (game_player[i].freeze) continue;
         if (game_player[i].collision == 1)
             game_player[i].fire_timer >>= 1;
         if (game_player[i].collision > 5 || random() < 300 || (game_player[i].collision && random() < 2000)) {
@@ -347,7 +319,7 @@ void GLog_killPlayer(_tank *victim, _tank *killer) {
                 if (victim->hp == 1) {
                     victim->type = 0;
                     victim->hitpoint = 1;
-                    victim->speed = TANK_SPEED_1;
+                    //victim->speed = TANK_SPEED_1;
                     victim->bullet_limit = 1;
                     victim->bullet_speed = BULLET_SPEED_1;
                     victim->uranium_bullets = 0;
@@ -563,13 +535,12 @@ void GLog_initGamer(u8 player_idx) {
         game_player[player_idx].bullet_speed = BULLET_SPEED_1;
         game_player[player_idx].uranium_bullets = 0;
         game_player[player_idx].type = 0;
-        if (mods.pl_en_tank) game_player[player_idx].type = 4;
         game_player[player_idx].ship = 0;
         game_player[player_idx].woods_trim = 0;
     }
     freeze_players = 0;
     game_player[player_idx].hitpoint = 1;
-    game_player[player_idx].god = 256;
+    game_player[player_idx].god = 2 * 64; // 2 s
     if (mods.pl_shieldless) game_player[player_idx].god = 0;
     game_player[player_idx].rotate = 0;
 
@@ -590,6 +561,39 @@ void GLog_initGamer(u8 player_idx) {
         game_player[player_idx].posx = START_X_PL_B << 3;
         game_player[player_idx].posy = START_Y_PL_B << 3;
         game_player[player_idx].player = 2;
+    }
+
+    if (mods.pl_en_tank && game_player[player_idx].type < 4) {
+        game_player[player_idx].type += 4;
+        // Reset upgrades
+        game_player[player_idx].bullet_speed = BULLET_SPEED_1;
+        game_player[player_idx].bullet_limit = 1;
+        game_player[player_idx].uranium_bullets = 0;
+        // Set enemy's upgrades
+        if (game_player[player_idx].type == 6) {
+            game_player[player_idx].bullet_limit = 2;
+            game_player[player_idx].bullet_speed = BULLET_SPEED_2;
+        }
+        else if (game_player[player_idx].type == 7) {
+            game_player[player_idx].hitpoint = 4;
+        }
+    }
+    else if (!mods.pl_en_tank && game_player[player_idx].type >= 4) {
+        game_player[player_idx].type -= 4;
+        // Reset upgrades
+        game_player[player_idx].bullet_speed = BULLET_SPEED_1;
+        game_player[player_idx].bullet_limit = 1;
+        game_player[player_idx].uranium_bullets = 0;
+        // Set player's upgrades
+        if (game_player[player_idx].type >= 1) {
+            game_player[player_idx].bullet_speed = BULLET_SPEED_2;
+        }
+        if (game_player[player_idx].type >= 2) {
+            game_player[player_idx].bullet_limit = 2;
+        }
+        if (game_player[player_idx].type == 3) {
+            game_player[player_idx].uranium_bullets = 1;
+        }
     }
     victory_timer = 0;
 }
@@ -659,7 +663,7 @@ void GLog_initGameLogic() {
 void GLog_initEnemy() {
 
     u16 i;
-    _tank *buff;
+    _tank *buff = NULL;
     u8 tank_type = 2;
 
     if (selected_stage == 0) {
@@ -686,13 +690,11 @@ void GLog_initEnemy() {
     //tank_type = enemy_num & 3;
     for (i = 2; i < config.units_on_map; i++) {
         buff = &game_player[i];
-        if (buff->hitpoint) {
-            buff = 0;
-            continue;
+        if (buff->hitpoint == 0) {
+            break;
         }
-        break;
     }
-    if (buff == 0)
+    if (i == config.units_on_map)
         return;
 
     enemy_num--;
@@ -708,17 +710,13 @@ void GLog_initEnemy() {
     if (mods.en_pl_skin) buff->type = 0;
 
     buff->posy = 0;
-    buff->speed = enemy_types[tank_type].speed;
-
-    buff->rotate = 2;
     buff->posx = enemy_pos_x[enemy_num % 3];
+    buff->rotate = 2;
     buff->bullets_count = 0;
     buff->birth = BIRTH_TIME_ENEMY;
-    buff->hitpoint = enemy_types[tank_type].hitpoint;
     buff->color = TANK_COLOR_GREY;
     buff->bonus = (enemy_num & 3) ? 0 : 1;
 
-//    buff->bonus = 1;
     if (mods.no_bonuses) buff->bonus = 0;
 
     birth_timer = current_birth_time;
@@ -728,7 +726,7 @@ void GLog_initEnemy() {
     buff->god = 0;
     buff->player = 0;
 
-    if (mods.en_speed) buff->speed = TANK_SPEED_3;
+    //if (mods.en_speed) buff->speed = TANK_SPEED_3;
     if (mods.en_armor) buff->hitpoint = 4;
     if (mods.en_uranium) buff->uranium_bullets = 1;
     if (mods.en_bull_speed) buff->bullet_speed = BULLET_SPEED_2;
@@ -938,13 +936,13 @@ void setBonus(u8 player) {
     u16 i;
     switch (bonus.type) {
         case BONUS_HELMET:
-            game_player[player].god = 1024;
+            game_player[player].god = 10 * 64; // 10 s
             break;
         case BONUS_CLOCK:
             if (player == 0 || player == 1)
-                freeze = 1024;
+                freeze = 10 * 64; // 10 s
             else
-                freeze_players = 1024;
+                freeze_players = 10 * 64; // 10 s
             break;
         case BONUS_SCOOP:
             if (player == 0 || player == 1)
@@ -958,49 +956,50 @@ void setBonus(u8 player) {
                 if (game_player[player].type > 3) {
                     game_player[player].type = 3;
                 }
-                if (game_player[player].type == 1) {
+                else if (game_player[player].type == 1) {
                     game_player[player].bullet_speed = BULLET_SPEED_2;
                 }
-                if (game_player[player].type == 2) {
+                else if (game_player[player].type == 2) {
                     game_player[player].bullet_limit = 2;
                 }
-                if (game_player[player].type == 3) {
+                else if (game_player[player].type == 3) {
                     game_player[player].uranium_bullets = 1;
                 }
             }
-            else if ((player >= 2 && !mods.en_pl_skin) || (player < 2 && mods.pl_en_tank)) {
-                if (game_player[player].type == 4) {
-                    game_player[player].type = 5;
-                    game_player[player].hitpoint = 1;
-                    game_player[player].speed = TANK_SPEED_3;
-                    game_player[player].bullet_limit = 1;
-                    game_player[player].bullet_speed = BULLET_SPEED_1;
-                }
-                else if (game_player[player].type == 5) {
-                    game_player[player].type = 6;
-                    game_player[player].hitpoint = 1;
-                    game_player[player].speed = TANK_SPEED_1;
-                    game_player[player].bullet_limit = 2;
-                    game_player[player].bullet_speed = BULLET_SPEED_2;
-                }
-                else if (game_player[player].type == 6) {
+            else {//if ((player >= 2 && !mods.en_pl_skin) || (player < 2 && mods.pl_en_tank)) {
+                game_player[player].type++;
+                if (game_player[player].type > 7) {
                     game_player[player].type = 7;
-                    game_player[player].hitpoint = 4;
-                    game_player[player].speed = TANK_SPEED_1;
-                    game_player[player].bullet_limit = 1;
-                    game_player[player].bullet_speed = BULLET_SPEED_1;
-                }
-                else if (game_player[player].type == 7) {
+
                     game_player[player].hitpoint += 2;
-                    if (game_player[player].speed == TANK_SPEED_1)
-                        game_player[player].speed = TANK_SPEED_2;
-                    else if (game_player[player].speed == TANK_SPEED_2)
-                        game_player[player].speed = TANK_SPEED_3;
+                    //if (game_player[player].speed == TANK_SPEED_1)
+                    //    game_player[player].speed = TANK_SPEED_2;
+                    //else if (game_player[player].speed == TANK_SPEED_2)
+                    //    game_player[player].speed = TANK_SPEED_3;
                     if (game_player[player].bullet_limit == 1)
                         game_player[player].bullet_limit = 2;
                     if (game_player[player].bullet_speed == BULLET_SPEED_1)
                         game_player[player].bullet_speed = BULLET_SPEED_2;
                 }
+                else if (game_player[player].type == 5) {
+                    game_player[player].hitpoint = 1;
+                    //game_player[player].speed = TANK_SPEED_3;
+                    game_player[player].bullet_limit = 1;
+                    game_player[player].bullet_speed = BULLET_SPEED_1;
+                }
+                else if (game_player[player].type == 6) {
+                    game_player[player].hitpoint = 1;
+                    //game_player[player].speed = TANK_SPEED_1;
+                    game_player[player].bullet_limit = 2;
+                    game_player[player].bullet_speed = BULLET_SPEED_2;
+                }
+                else if (game_player[player].type == 7) {
+                    game_player[player].hitpoint = 4;
+                    //game_player[player].speed = TANK_SPEED_1;
+                    game_player[player].bullet_limit = 1;
+                    game_player[player].bullet_speed = BULLET_SPEED_1;
+                }
+                game_player[player].tank_type = game_player[player].type - 4;
             }
             break;
         case BONUS_GRENADE:
@@ -1037,22 +1036,27 @@ void setBonus(u8 player) {
             }
             break;
         case BONUS_GUN:
-            if (player == 0 || player == 1) {
+            if ((player < 2 && !mods.pl_en_tank) || (player >= 2 && mods.en_pl_skin)) {
                 game_player[player].type = 3;
-                game_player[player].bullet_speed = BULLET_SPEED_2;
                 game_player[player].bullet_limit = 2;
+                game_player[player].bullet_speed = BULLET_SPEED_2;
                 game_player[player].uranium_bullets = 1;
-                game_player[player].hp = 1;
                 game_player[player].woods_trim = 1;
+
+                if (player < 2)
+                    game_player[player].hp = 1;
             }
             else {
                 game_player[player].type = 7;
-                game_player[player].hitpoint = 4;
-                game_player[player].speed = TANK_SPEED_2;
                 game_player[player].bullet_limit = 2;
                 game_player[player].bullet_speed = BULLET_SPEED_2;
                 game_player[player].uranium_bullets = 1;
                 game_player[player].woods_trim = 1;
+
+                game_player[player].hitpoint = 4;
+                //game_player[player].speed = TANK_SPEED_2;
+                if (player >= 2)
+                    game_player[player].tank_type = game_player[player].type - 4;
             }
             break;
         case BONUS_SHIP:

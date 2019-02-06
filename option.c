@@ -385,7 +385,7 @@ void customGameOptionUpdateState(s8 item_to_update) {
             }
             if (!all) break;
         case 4:
-            config.mods_count = shiftStateEx(config.mods_count, 0, 6);
+            config.mods_count = shiftStateEx(config.mods_count, 0, MAX_MODS_ON_LEVEL);
             clearText(4, 14);
             drawNum(config.mods_count, 25, 14);
             if (!all) break;

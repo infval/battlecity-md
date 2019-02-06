@@ -32,7 +32,7 @@ static const char* mods_text[] = {
     , "the enemy is invulnerable"
 };
 
-static const char *text[6] = { 0 };
+static const char *text[MAX_MODS_ON_LEVEL] = { 0 };
 
 void showModText() {
     u8 i;
@@ -64,7 +64,13 @@ void generateModsList() {
     mods.en_no_walls = 0;
     mods.pvp_kills = 0;
     mods.no_bonuses = 0;
+
     mods.en_on_map_inc = 0;
+    config.max_enemies_on_map = MAX_ENEMIES;
+    config.units_on_map = config.max_enemies_on_map + 2;
+    config.max_explode = config.units_on_map << 1;
+    config.max_bullets = config.units_on_map << 1;
+
     mods.en_shielded = 0;
     mods.pl_shieldless = 0;
     mods.pl_asskiller = 0;

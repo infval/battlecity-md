@@ -37,7 +37,7 @@
 #define BONUS_SHIP                  8
 
 #define GAME_VERSION                "1.08"
-#define GAME_BUILD                  "17"
+#define GAME_BUILD                  "18"
 
 
 // ================== GAME CONFIG ===================
@@ -62,6 +62,7 @@
 #define RANDOM_MODS                 1
 #define MODS_COUNT                  1
 #define MODS_INC                    3
+#define MAX_MODS_ON_LEVEL           6
 
 #define DEBUG                       OFF
 

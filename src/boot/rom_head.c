@@ -23,7 +23,7 @@ const struct
     char region[16];                /* Country Support (16) */
 } rom_header = {
     "SEGA MEGA DRIVE ",
-    "(c)werton 2018  ",
+    "(c)werton 2019  ",
     "Battle City MD                                  ",
     "Battle City MD                                  ",
     "GM 00000000-00",
