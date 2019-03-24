@@ -551,6 +551,9 @@ void GLog_initGamer(u8 player_idx) {
     game_player[player_idx].hp = 0;
     game_player[player_idx].bonus = 0;
 
+    game_player[player_idx].ice = 0;
+    game_player[player_idx].on_ice = FALSE;
+
     if (player_idx == 0) {
         game_player[player_idx].color = TANK_COLOR_YELLOW;
         game_player[player_idx].posx = START_X_PL_A << 3;

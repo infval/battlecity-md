@@ -225,26 +225,28 @@ u8 moveAvailableInWalls(_tank *tank) {
      || tile_idx == RES_TILE_ICE
      || (tank->ship == 1 && tile_idx == RES_TILE_RIVER)) i4 = TRUE;
 
-    u16 ice = FALSE;
-    if (
-        (r == 0 && (mapGetTile(x1, y1+1) == RES_TILE_ICE || mapGetTile(x2, y1+1) == RES_TILE_ICE))
-     || (r == 1 && (mapGetTile(x1+1, y2) == RES_TILE_ICE || mapGetTile(x1+1, y1) == RES_TILE_ICE))
-     || (r == 2 && (mapGetTile(x2, y2-1) == RES_TILE_ICE || mapGetTile(x1, y2-1) == RES_TILE_ICE))
-     || (r == 3 && (mapGetTile(x2-1, y2) == RES_TILE_ICE || mapGetTile(x2-1, y1) == RES_TILE_ICE))
-       ) {
-        ice = TRUE;
-    }
+    if (tank == &game_player[0] || tank == &game_player[1]) {
+        u16 ice = FALSE;
+        if (
+            (r == 0 && (mapGetTile(x1, y1+1) == RES_TILE_ICE || mapGetTile(x2, y1+1) == RES_TILE_ICE))
+         || (r == 1 && (mapGetTile(x1+1, y2) == RES_TILE_ICE || mapGetTile(x1+1, y1) == RES_TILE_ICE))
+         || (r == 2 && (mapGetTile(x2, y2-1) == RES_TILE_ICE || mapGetTile(x1, y2-1) == RES_TILE_ICE))
+         || (r == 3 && (mapGetTile(x2-1, y2) == RES_TILE_ICE || mapGetTile(x2-1, y1) == RES_TILE_ICE))
+        ) {
+            ice = TRUE;
+        }
 
-    tank->on_ice = FALSE;
-    if (ice && tank->speed == 0) {
-        tank->on_ice = TRUE;
-    }
+        tank->on_ice = FALSE;
+        if (ice && tank->speed == 0) {
+            tank->on_ice = TRUE;
+        }
 
-    if (ice && tank->speed) {
-        tank->ice = 32; // 28 ?
-    }
-    else if (!ice) {
-        tank->ice = 0;
+        if (ice && tank->speed) {
+            tank->ice = 32; // 28 ?
+        }
+        else if (!ice) {
+            tank->ice = 0;
+        }
     }
 
     if (i1 && i2 && i3 && i4)
